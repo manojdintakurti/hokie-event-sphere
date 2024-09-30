@@ -11,7 +11,6 @@
 - **Real-Time Notifications**: Get notified of event updates and reminders via push notifications and calendar integrations (e.g., Google Calendar).
 - **Social Media Promotion**: Event organizers can promote their events on social media platforms like Facebook and Twitter to increase visibility.
 - **Venue Navigation**: Find event locations easily with map-based navigation integrated using Google Maps API.
-- **AI Chatbot**: An AI-powered chatbot helps users with event-related queries in real-time, using retrieval-augmented generation (RAG) techniques.
 
 ## Technologies Used
 
