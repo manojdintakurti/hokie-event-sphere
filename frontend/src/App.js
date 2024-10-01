@@ -5,6 +5,7 @@ import Home from './components/Home';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import UserProfile from './components/UserProfile';
+import CreateEvent from './components/CreateEvent';
 import Navigation from './components/Navigation';
 import './styles/global.css';
 
@@ -25,6 +26,19 @@ function App() {
               <>
                 <SignedIn>
                   <UserProfile />
+                </SignedIn>
+                <SignedOut>
+                  <Navigate to="/sign-in" replace />
+                </SignedOut>
+              </>
+            } 
+          />
+          <Route 
+            path="/create-event" 
+            element={
+              <>
+                <SignedIn>
+                  <CreateEvent />
                 </SignedIn>
                 <SignedOut>
                   <Navigate to="/sign-in" replace />

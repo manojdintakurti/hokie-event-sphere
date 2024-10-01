@@ -16,6 +16,9 @@ function Home() {
           <Link to="/events">
             <button>Explore Events</button>
           </Link>
+          <Link to="/create-event">
+            <button style={{ marginLeft: '10px', backgroundColor: '#2ecc71' }}>Create New Event</button>
+          </Link>
         </div>
       ) : (
         <div>
