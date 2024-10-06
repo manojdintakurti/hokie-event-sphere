@@ -2,24 +2,15 @@ import React from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import '../styles/global.css';
+import HomeSignedIn from "./HomeSignedIn";
 
 function Home() {
   const { isSignedIn, user } = useUser();
 
   return (
     <div className="container">
-      <h1>Welcome to Hokie Event Sphere</h1>
       {isSignedIn ? (
-        <div>
-          <p>Hello, {user.firstName}! We're glad to see you here.</p>
-          <p>Ready to explore events or create your own?</p>
-          <Link to="/events">
-            <button>Explore Events</button>
-          </Link>
-          <Link to="/create-event">
-            <button style={{ marginLeft: '10px', backgroundColor: '#2ecc71' }}>Create New Event</button>
-          </Link>
-        </div>
+        <HomeSignedIn />
       ) : (
         <div>
           <p>Connect with your community, discover exciting events, and make the most of your university experience!</p>

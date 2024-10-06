@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/events', clerkAuth, require('./routes/events'));
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

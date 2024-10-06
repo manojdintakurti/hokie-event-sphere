@@ -8,6 +8,7 @@ import UserProfile from './components/UserProfile';
 import CreateEvent from './components/CreateEvent';
 import Navigation from './components/Navigation';
 import './styles/global.css';
+import Header from "./components/Header";
 
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -15,7 +16,7 @@ function App() {
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
       <Router>
-        <Navigation />
+        <Header/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in/*" element={<SignIn />} />

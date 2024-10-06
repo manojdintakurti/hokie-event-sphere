@@ -9,8 +9,8 @@ function Navigation() {
   return (
     <nav style={{ 
       backgroundColor: '#34495e', 
-      padding: '10px 0', 
-      marginBottom: '20px' 
+      padding: '10px 0',
+      marginTop:'30px'
     }}>
       <ul style={{ 
         listStyle: 'none', 
