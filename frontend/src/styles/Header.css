@@ -1,0 +1,66 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+}
+
+.header-left .logo {
+    height: 50px;
+}
+
+.header-center .search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding-right: 100px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+}
+.header-right {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+
+.header-right span {
+    margin-right: 15px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Styling for the UserButton component */
+.header-right .cl-user-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;  /* Increased size for the user button */
+    height: 50px; /* Increased size for the user button */
+    border-radius: 50%;
+    overflow: hidden;
+
+}
+
+.header-right .cl-user-button img {
+    width: 100%;   /* Ensure image fills the button */
+    height: 100%;  /* Ensure image fills the button */
+    object-fit: cover;
+}
+.navLinkStyle {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+.sign-in-sign-up-slot{
+    display: flex;
+    align-items: center;
+}
+.sign-in-link{
+    width: 100px;
+    text-decoration: none;
+    margin-top:15px;
+}

@@ -1,0 +1,33 @@
+.body-container {
+    padding: 40px;
+}
+
+/* Text and Image Section */
+.text-image-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.left-text h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #333;
+}
+
+.left-text p {
+    font-size: 18px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.right-image img {
+    width: 800px;
+    height: 350px;
+    border-radius: 8px;
+}
+.home-hero-button{
+    width:150px;
+    margin-right: 20px;
+}
