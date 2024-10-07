@@ -3,7 +3,6 @@
     justify-content: space-between;
     align-items: center;
     background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header-left .logo {
@@ -16,6 +15,7 @@
     padding-right: 100px;
     border-radius: 25px;
     border: 1px solid #ccc;
+    margin-top: 5px;
 }
 .header-right {
     display: flex;

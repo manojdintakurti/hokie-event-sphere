@@ -23,7 +23,11 @@
 }
 
 .right-image img {
-    width: 100%;
-    max-width: 500px;
+    width: 800px;
+    height: 350px;
     border-radius: 8px;
+}
+.home-hero-button{
+    width:150px;
+    margin-right: 20px;
 }

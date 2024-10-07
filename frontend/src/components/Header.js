@@ -1,6 +1,5 @@
 import React from 'react';
 import '../styles/Header.css';
-import { FaUserCircle } from 'react-icons/fa';
 import {Link, NavLink} from "react-router-dom";
 import {SignedIn, UserButton, useUser} from "@clerk/clerk-react";
 
