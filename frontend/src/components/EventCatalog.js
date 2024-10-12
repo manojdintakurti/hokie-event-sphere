@@ -2,6 +2,8 @@ import React from 'react';
 import '../styles/EventCatalog.css';
 
 import eventImage from '../Images/eventItem.png';
+import EventDetail from "./EventDetail";
+import {Link} from "react-router-dom";
 
 const events = [
     { id: 1, title: "Event 1", time: "12:00 PM", date: "Oct 20", location: "New York", type: "In-Person", image: eventImage },
@@ -18,7 +20,7 @@ function EventCatalog() {
     return (
         <div className="catalog-container">
             {events.map(event => (
-                <div className="event-box" key={event.id}>
+                <Link to="/event-detail" className="event-box" key={event.id} >
                     <div className="image-wrapper">
                         <img src={event.image} alt={event.title} className="event-image" />
                     </div>
@@ -31,7 +33,7 @@ function EventCatalog() {
                             {event.location} - {event.type}
                         </p>
                     </div>
-                </div>
+                </Link>
             ))}
         </div>
     );
