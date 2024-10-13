@@ -15,7 +15,7 @@
     padding-right: 100px;
     border-radius: 25px;
     border: 1px solid #ccc;
-    margin-top: 5px;
+    margin-top: 20px;
 }
 .header-right {
     display: flex;
@@ -63,4 +63,22 @@
     width: 100px;
     text-decoration: none;
     margin-top:15px;
+}
+.create-event-button{
+    margin-top : 0px;
+}
+
+.create-event-button {
+    background-color: #7c3aed;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.create-event-button:hover {
+    background-color: #6a27db;
 }
