@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
-
+import "../styles/createEvent.css"
 // import { useNavigate } from 'react-router-dom';
 
 function CreateEvent() {
