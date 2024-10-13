@@ -15,6 +15,9 @@ function Header() {
             <div className="header-center">
                 <input type="text" placeholder="Search for events..." className="search-bar" />
             </div>
+            <div>
+                {isSignedIn?(<Link to={"/create-event"} className={"create-event-button"}>Create an event</Link >):(<></>)}
+            </div>
             <div className="header-right">
                 {
                     isSignedIn ?(
