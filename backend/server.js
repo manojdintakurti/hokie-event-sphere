@@ -16,7 +16,7 @@ cloudinary.config({
 
 // CORS middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // Specify the exact origin of your frontend
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000' 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
