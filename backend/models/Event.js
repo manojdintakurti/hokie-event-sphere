@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const EventSchema = new mongoose.Schema({
+const eventSchema = new mongoose.Schema({
   title: { type: String, required: true },
   venue: { type: String, required: true },
   startTime: { type: String, required: true },
@@ -12,6 +12,6 @@ const EventSchema = new mongoose.Schema({
   description: { type: String, required: true },
   imageUrl: { type: String },
   organizerId: { type: String, required: true }
-});
+}, { timestamps: true }); // This adds createdAt and updatedAt fields
 
-module.exports = mongoose.model('Event', EventSchema);
+module.exports = mongoose.model('Event', eventSchema);

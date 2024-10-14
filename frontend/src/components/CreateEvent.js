@@ -53,14 +53,14 @@ function CreateEvent() {
       const token = await getToken();
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/events`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json, text/plain, */*'
+          // 'Accept': 'application/json, text/plain, */*'
         },
         withCredentials: true
       });
       console.log('Event created:', response.data);
-      navigate('/events'); 
+      navigate('/'); 
     } catch (error) {
       console.error('Error creating event:', error.response?.data || error.message);
       setError(`Failed to create event: ${error.response?.data?.message || error.message}`);
