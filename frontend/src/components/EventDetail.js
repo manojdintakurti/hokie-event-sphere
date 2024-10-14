@@ -4,8 +4,16 @@ import eventImage from '../Images/eventItem.png';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import EventDetailMid from "./EventDetailMid";
 import EventCatalog from "./EventCatalog"; // Add social media icons
+import { useNavigate } from 'react-router-dom';
+
 
 function EventDetail() {
+    const navigate = useNavigate();
+
+    const handleGoBack = () => {
+        navigate(-1); // Goes back to the previous page
+    };
+
     return (
         <div>
             <div className="event-detail-page">
@@ -13,7 +21,7 @@ function EventDetail() {
                 <div className="background-overlay" style={{backgroundImage: `url(${eventImage})`}}></div>
 
                 {/* Back button at top left */}
-                <button className="back-button">← Back</button>
+                <button className="back-button" onClick={handleGoBack}>← Back</button>
 
                 <div className="event-content">
                     {/* Left side: Event heading and details */}
