@@ -4,23 +4,30 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 const Event = require('../models/Event');
-const upload = multer({ dest: 'uploads/' });
+
+// Configure multer to use memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // or your frontend URL
+  origin: process.env.FRONTEND_URL,
   optionsSuccessStatus: 200,
   credentials: true,
 };
 
-// router.use(cors(corsOptions));
-
-//POST route for creating events
+// POST route for creating events
 router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => {
   try {
     let imageUrl = '';
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      imageUrl = result.secure_url;
+      // Convert buffer to data URI
+      const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      
+      // Upload to Cloudinary
+      const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+      });
+      
+      imageUrl = uploadResponse.secure_url;
     }
 
     const newEvent = new Event({
@@ -31,11 +38,12 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
     const savedEvent = await newEvent.save();
     res.status(201).json(savedEvent);
   } catch (error) {
+    console.error('Error creating event:', error);
     res.status(400).json({ message: error.message });
   }
 });
 
-//GET route for retrieving events
+// GET route for retrieving events
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -57,9 +65,9 @@ router.get('/', async (req, res) => {
       totalEvents: total
     });
   } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ message: error.message });
   }
 });
-
 
 module.exports = router;
