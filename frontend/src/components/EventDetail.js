@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/EventDetail.css';
+import RSVPForm from './RSVPForm';
 import eventImage from '../Images/eventItem.png';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import EventDetailMid from "./EventDetailMid";
@@ -39,7 +40,8 @@ function EventDetail() {
 
                         <a className="add-to-calendar">Add to calendar</a>
 
-                        <button className="rsvp-button">RSVP for the Event</button>
+                        {/* <button className="rsvp-button">RSVP for the Event</button> */}
+                        <RSVPForm eventTitle="Dream World Wide in Jakarta" />
                     </div>
                 </div>
             </div>
