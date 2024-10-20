@@ -344,6 +344,43 @@
     font-weight: bold;
 }
 
+/*.event-left-section a {*/
+/*    color: #6b3fe1;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*.event-left-section a:hover {*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*!* Right section: Map location and social media sharing *!*/
+/*.event-right-section {*/
+/*    padding: 20px;*/
+/*    background-color: white;*/
+/*    color: black;*/
+/*    border-radius: 8px;*/
+
+/*}*/
+
+/*.event-right-section h4 {*/
+/*    font-size: 22px;*/
+/*    margin-bottom: 10px;*/
+/*    font-style: italic;*/
+/*}*/
+/* Right section: Map location and social media sharing */
+.event-right-section {
+    padding: 20px;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+}
+
+.event-right-section h4 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
 .event-left-section a {
     color: #6b3fe1;
     text-decoration: none;
@@ -353,20 +390,6 @@
     text-decoration: none;
 }
 
-/* Right section: Map location and social media sharing */
-.event-right-section {
-    padding: 20px;
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-
-}
-
-.event-right-section h4 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    font-style: italic;
-}
 
 .map-container {
     margin-bottom: 20px;
