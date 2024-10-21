@@ -41,7 +41,7 @@ function EventDetail() {
                         <a className="add-to-calendar">Add to calendar</a>
 
                         {/* <button className="rsvp-button">RSVP for the Event</button> */}
-                        <RSVPForm eventTitle="Dream World Wide in Jakarta" />
+                        <RSVPForm eventTitle="Dream World Wide in Jakarta" eventId={eventId}/>
                     </div>
                 </div>
             </div>

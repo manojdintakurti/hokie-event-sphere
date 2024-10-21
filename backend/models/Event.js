@@ -11,7 +11,13 @@ const eventSchema = new mongoose.Schema({
   organizerEmail: { type: String, required: true },
   description: { type: String, required: true },
   imageUrl: { type: String },
-  organizerId: { type: String, required: true }
+  organizerId: { type: String, required: true },
+  rsvps:[{
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String },
+    createdAt: { type: Date, default: Date.now },
+  }]
 }, { timestamps: true }); // This adds createdAt and updatedAt fields
 
 module.exports = mongoose.model('Event', eventSchema);

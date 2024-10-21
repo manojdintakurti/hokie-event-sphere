@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
-const cors = require('cors');
-const Event = require('../models/Event');
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
+const Event = require("../models/Event");
 
 // Configure multer to use memory storage
 const storage = multer.memoryStorage();
@@ -16,35 +16,64 @@ const corsOptions = {
 };
 
 // POST route for creating events
-router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => {
-  try {
-    let imageUrl = '';
-    if (req.file) {
-      // Convert buffer to data URI
-      const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-      
-      // Upload to Cloudinary
-      const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+router.post(
+  "/",
+  cors(corsOptions),
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      let imageUrl = "";
+      if (req.file) {
+        // Convert buffer to data URI
+        const fileStr = `data:${
+          req.file.mimetype
+        };base64,${req.file.buffer.toString("base64")}`;
+
+        // Upload to Cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(fileStr, {});
+
+        imageUrl = uploadResponse.secure_url;
+      }
+
+      const newEvent = new Event({
+        ...req.body,
+        imageUrl,
       });
-      
-      imageUrl = uploadResponse.secure_url;
+
+      const savedEvent = await newEvent.save();
+      res.status(201).json(savedEvent);
+    } catch (error) {
+      console.error("Error creating event:", error);
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
+
+// POST event RSVP route
+router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
     }
 
-    const newEvent = new Event({
-      ...req.body,
-      imageUrl
-    });
+    const newRSVP = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+    };
 
-    const savedEvent = await newEvent.save();
-    res.status(201).json(savedEvent);
+    event.rsvps.push(newRSVP);
+    await event.save();
+    res.status(201).json(event);
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error("Error creating RSVP:", error);
     res.status(400).json({ message: error.message });
   }
 });
 
 // GET route for retrieving events
-router.get('/', async (req, res) => {
+router.get("/", cors(corsOptions), async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
@@ -62,10 +91,24 @@ router.get('/', async (req, res) => {
       events,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
-      totalEvents: total
+      totalEvents: total,
     });
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.error("Error fetching events:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET route for retrieving events by id
+router.get("/:id", async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.json(event);
+  } catch (error) {
+    console.error("Error fetching event by id:", error);
     res.status(500).json({ message: error.message });
   }
 });
