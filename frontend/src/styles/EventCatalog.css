@@ -4,6 +4,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;  /* Increased gap for better spacing */
     padding: 20px;  /* Padding around the grid */
+    text-decoration: none;
 }
 
 /* Individual event box with inner white border */
@@ -17,6 +18,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;  /* Hover effects */
     cursor: pointer;
     padding:10px;
+    text-decoration: none;
 }
 
 /* Image styling */
@@ -69,4 +71,35 @@
 .event-box {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Takes up the full screen height */
+    text-align: center;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.5rem;
+    color: #3498db; /* Blue color */
+    font-weight: bold;
 }
