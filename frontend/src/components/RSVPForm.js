@@ -14,7 +14,12 @@ import "../styles/RSVPForm.css";
 
 const RSVPForm = ({ eventTitle, eventId }) => {
   const [open, setOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success"
+  });
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,13 +35,19 @@ const RSVPForm = ({ eventTitle, eventId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log('Form submitted:', formData);
+    setLoading(true);
+    
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`,
-        formData
+        formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
-      console.log("Response from server:", response.data);
+
+      console.log('RSVP response:', response.data);
 
       setFormData({
         name: "",
@@ -44,15 +55,39 @@ const RSVPForm = ({ eventTitle, eventId }) => {
         phone: "",
       });
       handleClose();
-      setSnackbarOpen(true);
+      setSnackbar({
+        open: true,
+        message: "You have successfully RSVP'd for the event!",
+        severity: "success"
+      });
     } catch (error) {
       console.error("Error submitting RSVP:", error);
+      const errorMessage = error.response?.data?.message || "Error submitting RSVP. Please try again.";
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: "error"
+      });
+      if (!error.response?.data?.message?.includes("already RSVP")) {
+        handleClose();
+      }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
   };
 
   return (
     <>
-      <Button className="rsvp-button" onClick={handleOpen}>
+      <Button 
+        className="rsvp-button" 
+        onClick={handleOpen}
+        variant="contained"
+        color="primary"
+      >
         RSVP for the Event
       </Button>
 
@@ -70,6 +105,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               value={formData.name}
               onChange={handleChange}
               required
+              disabled={loading}
             />
             <TextField
               margin="dense"
@@ -81,6 +117,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               value={formData.email}
               onChange={handleChange}
               required
+              disabled={loading}
             />
             <TextField
               margin="dense"
@@ -91,29 +128,40 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               variant="outlined"
               value={formData.phone}
               onChange={handleChange}
+              disabled={loading}
+              helperText="Optional"
             />
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button className="rsvp-submit-button" onClick={handleSubmit}>
-            Submit RSVP
+          <Button onClick={handleClose} disabled={loading}>
+            Cancel
+          </Button>
+          <Button 
+            className="rsvp-submit-button" 
+            onClick={handleSubmit}
+            disabled={loading}
+            variant="contained"
+            color="primary"
+          >
+            {loading ? "Submitting..." : "Submit RSVP"}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity="success"
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
           className="rsvp-alert"
+          variant="filled"
         >
-          You have successfully RSVP'd for the event!
+          {snackbar.message}
         </Alert>
       </Snackbar>
     </>

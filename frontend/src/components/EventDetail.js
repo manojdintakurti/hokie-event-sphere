@@ -67,6 +67,8 @@ END:VCALENDAR
             .then(data => {
                 setEvent(data); // Set the fetched event data to state
                 setLoading(false);
+
+                console.log('Fetched event:', data);
             })
             .catch(error => {
                 console.error('Error fetching event:', error);
@@ -136,7 +138,7 @@ END:VCALENDAR
                             endTime={event.endTime}
                             timeZone="America/Los_Angeles"
                         ></add-to-calendar-button>
-                        <RSVPForm eventTitle={event.title} eventId={eventId}/>
+                        <RSVPForm eventTitle={event.title} eventId={event._id}/>
                     </div>
                 </div>
             </div>
