@@ -16,7 +16,7 @@ cloudinary.config({
 
 // CORS middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', 
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -38,6 +38,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-const PORT = process.env.PORT || 5002; // Make sure this matches your actual port
+const PORT = process.env.PORT || 5002; 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

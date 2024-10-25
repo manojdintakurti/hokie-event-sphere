@@ -10,7 +10,7 @@ function EventCatalog() {
 
     const fetchEvents = (page) => {
         setLoading(true);
-        fetch(`http://localhost:5002/api/events?page=${page}&limit=12`)
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&limit=12`)
             .then(response => response.json())
             .then(data => {
                 setEvents(data.events);

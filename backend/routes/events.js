@@ -43,6 +43,33 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
   }
 });
 
+// POST event RSVP route
+router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const savedEvent = await newEvent.save();
+    res.status(201).json(savedEvent);
+    const newRSVP = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+    };
+
+    event.rsvps.push(newRSVP);
+    await event.save();
+    res.status(201).json(event);
+  } catch (error) {
+    console.error('Error creating event:', error);
+    console.error("Error creating RSVP:", error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+
 // GET route for retrieving events
 router.get('/', async (req, res) => {
   try {
