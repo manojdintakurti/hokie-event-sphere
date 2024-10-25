@@ -39,11 +39,12 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
   }
 });
 
-// POST event RSVP route
 router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
   try {
-    console.log('RSVP Request Body:', req.body);
-    console.log('Event ID:', req.params.id);
+    console.log('RSVP Request:', {
+      body: req.body,
+      eventId: req.params.id
+    });
 
     // Validate required fields
     const { name, email, phone } = req.body;
@@ -51,48 +52,55 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
       return res.status(400).json({ message: "Name and email are required" });
     }
 
-    // Find the event by ID
+    // Find the event
     const event = await Event.findById(req.params.id);
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Check if email already exists in RSVPs
-    const existingRSVP = event.rsvps.find(rsvp => rsvp.email === email);
+    // Check for duplicate RSVP
+    const normalizedEmail = email.toLowerCase().trim();
+    const existingRSVP = event.rsvps.find(rsvp => 
+      rsvp.email.toLowerCase().trim() === normalizedEmail
+    );
+
     if (existingRSVP) {
       return res.status(400).json({ message: "You have already RSVP'd for this event" });
     }
 
-    // Create new RSVP object matching your schema
+    // Create new RSVP
     const newRSVP = {
-      name,
-      email,
-      phone: phone || '', // Make phone optional
+      name: name.trim(),
+      email: normalizedEmail,
+      phone: phone ? phone.trim() : '',
       createdAt: new Date()
     };
 
     // Add RSVP to event
     event.rsvps.push(newRSVP);
-
-    // Save the updated event
     await event.save();
 
-    // Attempt to send email, but don't fail if it doesn't work
-    const emailResult = await emailService.sendRSVPConfirmation(event, newRSVP);
-
-    res.status(201).json({
-      message: emailResult.success 
-        ? "RSVP successful and confirmation email sent"
-        : "RSVP successful but confirmation email could not be sent",
-      rsvp: newRSVP,
-      emailSent: emailResult.success,
-      emailError: emailResult.error
-    });
-
+    // Send email confirmation
+    try {
+      const emailService = require('../services/emailService');
+      await emailService.sendRSVPConfirmation(event, newRSVP);
+      
+      res.status(201).json({
+        message: "RSVP successful and confirmation email sent",
+        rsvp: newRSVP
+      });
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      
+      res.status(201).json({
+        message: "RSVP successful, but there was an issue sending the confirmation email",
+        rsvp: newRSVP
+      });
+    }
   } catch (error) {
-    console.error('RSVP creation failed:', error);
+    console.error('Error in RSVP route:', error);
     res.status(500).json({ 
-      message: "Internal server error",
+      message: "An error occurred while processing your RSVP",
       error: error.message 
     });
   }
