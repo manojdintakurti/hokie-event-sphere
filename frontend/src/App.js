@@ -50,7 +50,7 @@ function App() {
               </>
             } 
           />
-          <Route path="/event-detail" element={<EventDetail />} />
+          <Route path="/event-detail/:eventId" element={<EventDetail />} />
         </Routes>
         <Footer />
       </Router>

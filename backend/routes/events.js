@@ -94,21 +94,7 @@ router.get("/", cors(corsOptions), async (req, res) => {
       totalEvents: total,
     });
   } catch (error) {
-    console.error("Error fetching events:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// GET route for retrieving events by id
-router.get("/:id", async (req, res) => {
-  try {
-    const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-    res.json(event);
-  } catch (error) {
-    console.error("Error fetching event by id:", error);
+    console.error('Error fetching events:', error);
     res.status(500).json({ message: error.message });
   }
 });

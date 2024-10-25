@@ -151,7 +151,9 @@
     margin: 20px;
     color: white;
 }
-
+.atcb-text{
+    text-decoration: none;
+}
 /* Overlay for background image to ensure text visibility */
 .background-overlay {
     position: absolute;
@@ -246,18 +248,6 @@
 
 .rsvp-button:hover {
     background-color: #563dc8;
-}
-
-/* Add to calendar link styling */
-.add-to-calendar {
-    color: #7848F4;
-    display: block;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.add-to-calendar:hover {
-    color: #563dc8;
 }
 
 /* Grayed out text */
@@ -427,4 +417,15 @@
     font-size: 24px;
     margin:20px;
     font-family: 'Arial', sans-serif;
+}
+.read-more-btn{
+    color: #6a27db;
+    padding: 0px;
+    margin: 0px;
+    background: none;
+}
+.read-more-btn:hover{
+    font-size: 18px;
+    background: none;
+    text-decoration: underline;
 }
