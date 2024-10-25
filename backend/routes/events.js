@@ -79,16 +79,26 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
 
     // Send confirmation email
     try {
-      await emailService.sendRSVPConfirmation(event, newRSVP);
+      console.log('Attempting to send confirmation email');
+      const emailResult = await emailService.sendRSVPConfirmation(event, newRSVP);
+      console.log('Email sent successfully:', emailResult);
+      
+      res.status(201).json({
+        message: "RSVP successful and confirmation email sent",
+        rsvp: newRSVP,
+        emailSent: true
+      });
     } catch (emailError) {
-      console.error('Error sending confirmation email:', emailError);
+      console.error('Failed to send confirmation email:', emailError);
+      
+      // Still return success but indicate email wasn't sent
+      res.status(201).json({
+        message: "RSVP successful but confirmation email could not be sent",
+        rsvp: newRSVP,
+        emailSent: false,
+        emailError: emailError.message
+      });
     }
-
-    // Send success response
-    res.status(201).json({
-      message: "RSVP successful",
-      rsvp: newRSVP
-    });
 
   } catch (error) {
     console.error("Error creating RSVP:", error);
