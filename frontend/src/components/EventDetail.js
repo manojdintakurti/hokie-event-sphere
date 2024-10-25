@@ -62,7 +62,7 @@ END:VCALENDAR
     };
     useEffect(() => {
         // Fetch the specific event based on eventId
-        fetch(`http://localhost:5002/api/events/${eventId}`)
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`)
             .then(response => response.json())
             .then(data => {
                 setEvent(data); // Set the fetched event data to state
@@ -128,7 +128,7 @@ END:VCALENDAR
                         {/* Add-to-Calendar Button */}
                         <add-to-calendar-button
                             name={event.title}
-                            options="'Apple','Google','iCal','Outlook.com','Microsoft 365','Microsoft Teams','Yahoo'"
+                            options=" 'Apple','Google' "
                             location={event.venue}
                             startDate={new Date(event.startDate).toISOString().split('T')[0]}
                             endDate={new Date(event.endDate).toISOString().split('T')[0]}
@@ -136,7 +136,7 @@ END:VCALENDAR
                             endTime={event.endTime}
                             timeZone="America/Los_Angeles"
                         ></add-to-calendar-button>
-                        <RSVPForm eventTitle={event.title}/>
+                        <RSVPForm eventTitle={event.title} eventId={eventId}/>
                     </div>
                 </div>
             </div>
