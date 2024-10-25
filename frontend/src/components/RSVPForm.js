@@ -25,7 +25,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
     email: "",
     phone: "",
   });
-  
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     if (!loading) {
@@ -41,21 +41,22 @@ const RSVPForm = ({ eventTitle, eventId }) => {
     e.preventDefault();
     setLoading(true);
 
-    // Log request details for debugging
+    const requestData = {
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      phone: formData.phone.trim()
+    };
+
     console.log('Submitting RSVP:', {
       eventId,
-      formData,
+      data: requestData,
       url: `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`
     });
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`,
-        {
-          name: formData.name.trim(),
-          email: formData.email.trim().toLowerCase(),
-          phone: formData.phone.trim()
-        }
+        requestData
       );
 
       console.log('RSVP Response:', response.data);
@@ -68,29 +69,28 @@ const RSVPForm = ({ eventTitle, eventId }) => {
       handleClose();
       setSnackbar({
         open: true,
-        message: "You have successfully RSVP'd for the event!",
+        message: response.data.message || "RSVP successful!",
         severity: "success"
       });
     } catch (error) {
       console.error("Error submitting RSVP:", error);
+      
+      // Get the error message from the response
       const errorMessage = error.response?.data?.message || "Error submitting RSVP. Please try again.";
+      
       setSnackbar({
         open: true,
         message: errorMessage,
         severity: "error"
       });
 
-      // Only close the form if it's not a duplicate RSVP error
+      // Only close the dialog if it's not a duplicate RSVP error
       if (!errorMessage.includes("already RSVP")) {
         handleClose();
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
   };
 
   return (
@@ -124,8 +124,8 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               onChange={handleChange}
               required
               disabled={loading}
-              error={formData.name.trim() === ""}
-              helperText={formData.name.trim() === "" ? "Name is required" : ""}
+              error={!formData.name.trim()}
+              helperText={!formData.name.trim() ? "Name is required" : ""}
             />
             <TextField
               margin="dense"
@@ -138,13 +138,13 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               onChange={handleChange}
               required
               disabled={loading}
-              error={formData.email.trim() === ""}
-              helperText={formData.email.trim() === "" ? "Email is required" : ""}
+              error={!formData.email.trim()}
+              helperText={!formData.email.trim() ? "Email is required" : ""}
             />
             <TextField
               margin="dense"
               name="phone"
-              label="Phone Number"
+              label="Phone Number (Optional)"
               type="tel"
               fullWidth
               variant="outlined"
@@ -162,7 +162,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
             Cancel
           </Button>
           <Button 
-            className="rsvp-submit-button"
+            className="rsvp-submit-button" 
             onClick={handleSubmit}
             disabled={loading || !formData.name.trim() || !formData.email.trim()}
             variant="contained"
@@ -176,11 +176,11 @@ const RSVPForm = ({ eventTitle, eventId }) => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={handleSnackbarClose}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          onClose={handleSnackbarClose}
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
           severity={snackbar.severity}
           variant="filled"
         >
