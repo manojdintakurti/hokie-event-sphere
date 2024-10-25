@@ -144,7 +144,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
             <TextField
               margin="dense"
               name="phone"
-              label="Phone Number (Optional)"
+              label="Phone Number"
               type="tel"
               fullWidth
               variant="outlined"
