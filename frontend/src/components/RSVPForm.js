@@ -25,9 +25,13 @@ const RSVPForm = ({ eventTitle, eventId }) => {
     email: "",
     phone: "",
   });
-
+  
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    if (!loading) {
+      setOpen(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,18 +40,25 @@ const RSVPForm = ({ eventTitle, eventId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
+    // Log request details for debugging
+    console.log('Submitting RSVP:', {
+      eventId,
+      formData,
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`
+    });
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`,
-        formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+        {
+          name: formData.name.trim(),
+          email: formData.email.trim().toLowerCase(),
+          phone: formData.phone.trim()
         }
       );
 
-      console.log('RSVP response:', response.data);
+      console.log('RSVP Response:', response.data);
 
       setFormData({
         name: "",
@@ -68,7 +79,9 @@ const RSVPForm = ({ eventTitle, eventId }) => {
         message: errorMessage,
         severity: "error"
       });
-      if (!error.response?.data?.message?.includes("already RSVP")) {
+
+      // Only close the form if it's not a duplicate RSVP error
+      if (!errorMessage.includes("already RSVP")) {
         handleClose();
       }
     } finally {
@@ -91,7 +104,12 @@ const RSVPForm = ({ eventTitle, eventId }) => {
         RSVP for the Event
       </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <Dialog 
+        open={open} 
+        onClose={handleClose} 
+        maxWidth="sm" 
+        fullWidth
+      >
         <DialogTitle>RSVP for {eventTitle}</DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit}>
@@ -106,6 +124,8 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               onChange={handleChange}
               required
               disabled={loading}
+              error={formData.name.trim() === ""}
+              helperText={formData.name.trim() === "" ? "Name is required" : ""}
             />
             <TextField
               margin="dense"
@@ -118,29 +138,33 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               onChange={handleChange}
               required
               disabled={loading}
+              error={formData.email.trim() === ""}
+              helperText={formData.email.trim() === "" ? "Email is required" : ""}
             />
             <TextField
               margin="dense"
               name="phone"
-              label="Phone Number"
+              label="Phone Number (Optional)"
               type="tel"
               fullWidth
               variant="outlined"
               value={formData.phone}
               onChange={handleChange}
               disabled={loading}
-              helperText="Optional"
             />
           </form>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} disabled={loading}>
+          <Button 
+            onClick={handleClose} 
+            disabled={loading}
+          >
             Cancel
           </Button>
           <Button 
-            className="rsvp-submit-button" 
+            className="rsvp-submit-button"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !formData.name.trim() || !formData.email.trim()}
             variant="contained"
             color="primary"
           >
@@ -158,7 +182,6 @@ const RSVPForm = ({ eventTitle, eventId }) => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
-          className="rsvp-alert"
           variant="filled"
         >
           {snackbar.message}

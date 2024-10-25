@@ -20,13 +20,8 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
   try {
     let imageUrl = '';
     if (req.file) {
-      // Convert buffer to data URI
       const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-      
-      // Upload to Cloudinary
-      const uploadResponse = await cloudinary.uploader.upload(fileStr, {
-      });
-      
+      const uploadResponse = await cloudinary.uploader.upload(fileStr);
       imageUrl = uploadResponse.secure_url;
     }
 
@@ -46,29 +41,63 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
 // POST event RSVP route
 router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
   try {
+    console.log('RSVP Request Body:', req.body);
+    console.log('Event ID:', req.params.id);
+
+    // Validate required fields
+    const { name, email, phone } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required" });
+    }
+
+    // Validate event ID format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid event ID format" });
+    }
+
+    // Find the event by ID
     const event = await Event.findById(req.params.id);
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    const savedEvent = await newEvent.save();
-    res.status(201).json(savedEvent);
+    // Check if email already exists in RSVPs
+    const existingRSVP = event.rsvps.find(rsvp => rsvp.email === email);
+    if (existingRSVP) {
+      return res.status(400).json({ message: "You have already RSVP'd for this event" });
+    }
+
+    // Create new RSVP object matching your schema
     const newRSVP = {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
+      name,
+      email,
+      phone: phone || '', // Make phone optional
+      createdAt: new Date()
     };
 
+    // Add RSVP to event
     event.rsvps.push(newRSVP);
+
+    // Save the updated event
     await event.save();
-    res.status(201).json(event);
+
+    // Send success response
+    res.status(201).json({
+      message: "RSVP successful",
+      rsvp: newRSVP
+    });
+
   } catch (error) {
-    console.error('Error creating event:', error);
     console.error("Error creating RSVP:", error);
-    res.status(400).json({ message: error.message });
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: "Invalid event ID format" });
+    }
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 // GET route for retrieving events
 router.get('/', async (req, res) => {
@@ -94,14 +123,17 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({ message: error.message });
-    //
   }
 });
-
 
 // GET route for retrieving a specific event by ID
 router.get('/:id', async (req, res) => {
   try {
+    // Validate event ID format
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid event ID format" });
+    }
+
     const event = await Event.findById(req.params.id);
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
@@ -109,9 +141,11 @@ router.get('/:id', async (req, res) => {
     res.json(event);
   } catch (error) {
     console.error('Error fetching event:', error);
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: "Invalid event ID format" });
+    }
     res.status(500).json({ message: error.message });
   }
 });
-
 
 module.exports = router;
