@@ -20,20 +20,22 @@ function Header() {
             </div>
             <div className="header-right">
                 {
-                    isSignedIn ?(
+                    isSignedIn ? (
                         <SignedIn>
-                            <span>Hi, {user.fullName}</span>
-                            <UserButton userProfileMode="navigation" userProfileUrl="/profile" />
+                            <span>Hello, {user.fullName}</span>
+                            <UserButton userProfileMode="navigation" userProfileUrl="/profile"/>
                         </SignedIn>
-                    ):(
-                        <div className={"sign-in-sign-up-slot"}>
-                            <Link to="/sign-in" className={"sign-in-link"}>Sign in</Link>
-                            <button className={"btn btn-primary sign-up"}>Sign Up</button>
+                    ) : (
+                        <div className="sign-in-sign-up-slot">
+                            <Link to="/sign-in" className="sign-in-link">Log
+                                in</Link>
+                            <button className="btn btn-primary sign-up">Register</button>
+
                         </div>
                     )
                 }
-
             </div>
+
         </header>
     );
 }

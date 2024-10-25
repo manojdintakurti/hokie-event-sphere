@@ -3,23 +3,23 @@
     margin: 0 auto;
     padding: 20px;
   }
-  
-  .create-event-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .form-group input[type="text"],
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.create-event-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group input[type="text"],
   .form-group input[type="time"],
   .form-group input[type="date"],
   .form-group input[type="number"],

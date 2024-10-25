@@ -15,12 +15,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh; /* Full screen height */
+    width: 100vw; /* Full screen width */
     background-image: url("../Images/signInBackground.png"); /* Use the image as background */
     background-size: cover;
     background-position: center;
-    height: 100vh; /* Full screen height */
-    width: 100vw; /* Full screen width */
 }
+
 
 /* Centered sign-in form */
 .sign-in-form-centered {
