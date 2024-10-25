@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaLinkedin, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import {
     FacebookShareButton,
     LinkedinShareButton,

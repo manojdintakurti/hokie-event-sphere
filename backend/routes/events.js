@@ -4,6 +4,7 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 const Event = require('../models/Event');
+const emailService = require('../services/emailService');
 
 // Configure multer to use memory storage
 const storage = multer.memoryStorage();
@@ -50,11 +51,6 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
       return res.status(400).json({ message: "Name and email are required" });
     }
 
-    // Validate event ID format
-    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ message: "Invalid event ID format" });
-    }
-
     // Find the event by ID
     const event = await Event.findById(req.params.id);
     if (!event) {
@@ -80,6 +76,13 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
 
     // Save the updated event
     await event.save();
+
+    // Send confirmation email
+    try {
+      await emailService.sendRSVPConfirmation(event, newRSVP);
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+    }
 
     // Send success response
     res.status(201).json({

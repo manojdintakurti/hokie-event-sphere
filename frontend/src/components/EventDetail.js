@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // Import useParams to access URL params
 import '../styles/EventDetail.css';
 import RSVPForm from './RSVPForm';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+// import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import EventDetailMid from "./EventDetailMid";
 import EventCatalog from "./EventCatalog";
 import 'add-to-calendar-button';
@@ -130,7 +130,7 @@ END:VCALENDAR
                         {/* Add-to-Calendar Button */}
                         <add-to-calendar-button
                             name={event.title}
-                            options=" 'Apple','Google' "
+                            options="'Apple','Google'"
                             location={event.venue}
                             startDate={new Date(event.startDate).toISOString().split('T')[0]}
                             endDate={new Date(event.endDate).toISOString().split('T')[0]}
