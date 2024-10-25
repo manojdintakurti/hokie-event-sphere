@@ -77,38 +77,24 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
     // Save the updated event
     await event.save();
 
-    // Send confirmation email
-    try {
-      console.log('Attempting to send confirmation email');
-      const emailResult = await emailService.sendRSVPConfirmation(event, newRSVP);
-      console.log('Email sent successfully:', emailResult);
-      
-      res.status(201).json({
-        message: "RSVP successful and confirmation email sent",
-        rsvp: newRSVP,
-        emailSent: true
-      });
-    } catch (emailError) {
-      console.error('Failed to send confirmation email:', emailError);
-      
-      // Still return success but indicate email wasn't sent
-      res.status(201).json({
-        message: "RSVP successful but confirmation email could not be sent",
-        rsvp: newRSVP,
-        emailSent: false,
-        emailError: emailError.message
-      });
-    }
+    // Attempt to send email, but don't fail if it doesn't work
+    const emailResult = await emailService.sendRSVPConfirmation(event, newRSVP);
+
+    res.status(201).json({
+      message: emailResult.success 
+        ? "RSVP successful and confirmation email sent"
+        : "RSVP successful but confirmation email could not be sent",
+      rsvp: newRSVP,
+      emailSent: emailResult.success,
+      emailError: emailResult.error
+    });
 
   } catch (error) {
-    console.error("Error creating RSVP:", error);
-    if (error.name === 'CastError') {
-      return res.status(400).json({ message: "Invalid event ID format" });
-    }
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
-    }
-    res.status(500).json({ message: "Internal server error" });
+    console.error('RSVP creation failed:', error);
+    res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message 
+    });
   }
 });
 

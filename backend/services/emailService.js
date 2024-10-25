@@ -1,26 +1,34 @@
+// services/emailService.js
 const nodemailer = require('nodemailer');
 const getRSVPConfirmationTemplate = require('../templates/emailTemplates/rsvpConfirmation');
 
 class EmailService {
   constructor() {
+    this.isInitialized = false;
+
     // Log email configuration
     console.log('Initializing email service with:', {
       emailUser: process.env.EMAIL_USER ? 'Configured' : 'Missing',
       emailPassword: process.env.EMAIL_APP_PASSWORD ? 'Configured' : 'Missing'
     });
 
-    // Create transporter with verbose logging
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+      console.warn('Email service credentials not configured. Email sending will be disabled.');
+      return;
+    }
+
+    // Create transporter
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD
       },
-      debug: true, // Enable debug logging
-      logger: true  // Log to console
+      debug: true,
+      logger: true
     });
 
-    // Verify transporter configuration
+    // Verify connection
     this.verifyConnection();
   }
 
@@ -28,20 +36,26 @@ class EmailService {
     try {
       const verification = await this.transporter.verify();
       console.log('Email service connection verified:', verification);
+      this.isInitialized = true;
     } catch (error) {
       console.error('Email service connection failed:', error);
-      throw new Error('Failed to initialize email service');
+      this.isInitialized = false;
     }
   }
 
   async sendRSVPConfirmation(eventDetails, userDetails) {
-    console.log('Preparing to send RSVP confirmation email:', {
-      to: userDetails.email,
-      event: eventDetails.title
-    });
+    // Check if email service is properly initialized
+    if (!this.isInitialized) {
+      console.warn('Email service not initialized. Skipping email send.');
+      return {
+        success: false,
+        error: 'Email service not initialized'
+      };
+    }
 
     try {
-      // Generate email HTML
+      console.log('Preparing to send RSVP confirmation email to:', userDetails.email);
+
       const emailHtml = getRSVPConfirmationTemplate(eventDetails, userDetails);
       
       const mailOptions = {
@@ -51,27 +65,14 @@ class EmailService {
         },
         to: userDetails.email,
         subject: `RSVP Confirmation - ${eventDetails.title}`,
-        html: emailHtml,
-        headers: {
-          'X-Priority': '1',
-          'X-MSMail-Priority': 'High',
-          'Importance': 'high'
-        }
+        html: emailHtml
       };
-
-      console.log('Sending email with options:', {
-        to: mailOptions.to,
-        subject: mailOptions.subject,
-        from: mailOptions.from
-      });
 
       const info = await this.transporter.sendMail(mailOptions);
       
       console.log('Email sent successfully:', {
         messageId: info.messageId,
-        response: info.response,
-        accepted: info.accepted,
-        rejected: info.rejected
+        response: info.response
       });
       
       return {
@@ -79,14 +80,11 @@ class EmailService {
         messageId: info.messageId
       };
     } catch (error) {
-      console.error('Error sending email:', {
-        error: error.message,
-        code: error.code,
-        command: error.command,
-        stack: error.stack
-      });
-      
-      throw new Error(`Failed to send email: ${error.message}`);
+      console.error('Error sending email:', error);
+      return {
+        success: false,
+        error: error.message
+      };
     }
   }
 }
