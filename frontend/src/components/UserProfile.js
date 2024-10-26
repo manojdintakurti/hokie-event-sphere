@@ -363,6 +363,21 @@ const UserProfilePage = () => {
                                         label={interest}
                                         clickable
                                         onClick={() => handleInterestToggle(interest)}
+                                        sx={{
+                                            '&.MuiChip-root.MuiChip-filled': {
+                                                backgroundColor: "#7c3aed",
+                                                color: 'white',
+                                                '&:hover': {
+                                                    backgroundColor: '#6a27db'
+                                                }
+                                            },
+                                            '&.MuiChip-outlined': {
+                                                borderColor: '#e5e7eb',
+                                                '&:hover': {
+                                                    backgroundColor: 'rgba(124, 58, 237, 0.04)'
+                                                }
+                                            }
+                                        }}
                                         color={formData.interests.includes(interest) ? 'primary' : 'default'}
                                         variant={formData.interests.includes(interest) ? 'filled' : 'outlined'}
                                     />
