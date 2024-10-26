@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // Import useParams to access URL params
 import '../styles/EventDetail.css';
 import RSVPForm from './RSVPForm';
-// import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import EventDetailMid from "./EventDetailMid";
 import EventCatalog from "./EventCatalog";
 import 'add-to-calendar-button';
@@ -30,36 +29,9 @@ function EventDetail() {
                 </>
             );
         }
-        return description; // If description is short, show it as-is
-    };
-    const generateGoogleCalendarLink = () => {
-        const startDate = new Date(event.startDate).toISOString().replace(/-|:|\.\d\d\d/g, ""); // Format: YYYYMMDDTHHmmssZ
-        const endDate = new Date(event.endDate).toISOString().replace(/-|:|\.\d\d\d/g, "");
-        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.venue)}`;
+        return description; 
     };
 
-    // Generate .ics file for Apple Calendar
-    const downloadICSFile = () => {
-        const startDate = new Date(event.startDate).toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const endDate = new Date(event.endDate).toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const icsContent = `
-BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-SUMMARY:${event.title}
-DTSTART:${startDate}
-DTEND:${endDate}
-DESCRIPTION:${event.description}
-LOCATION:${event.venue}
-END:VEVENT
-END:VCALENDAR
-`;
-        const blob = new Blob([icsContent], { type: 'text/calendar' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `${event.title}.ics`;
-        link.click();
-    };
     useEffect(() => {
         // Fetch the specific event based on eventId
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`)
