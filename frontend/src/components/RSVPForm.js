@@ -9,6 +9,7 @@ import {
   TextField,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import "../styles/RSVPForm.css";
 
@@ -17,7 +18,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "success"
+    severity: "success",
   });
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,13 +45,13 @@ const RSVPForm = ({ eventTitle, eventId }) => {
     const requestData = {
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
-      phone: formData.phone.trim()
+      phone: formData.phone.trim(),
     };
 
-    console.log('Submitting RSVP:', {
+    console.log("Submitting RSVP:", {
       eventId,
       data: requestData,
-      url: `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}/rsvp`,
     });
 
     try {
@@ -59,7 +60,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
         requestData
       );
 
-      console.log('RSVP Response:', response.data);
+      console.log("RSVP Response:", response.data);
 
       setFormData({
         name: "",
@@ -70,18 +71,20 @@ const RSVPForm = ({ eventTitle, eventId }) => {
       setSnackbar({
         open: true,
         message: response.data.message || "RSVP successful!",
-        severity: "success"
+        severity: "success",
       });
     } catch (error) {
       console.error("Error submitting RSVP:", error);
-      
+
       // Get the error message from the response
-      const errorMessage = error.response?.data?.message || "Error submitting RSVP. Please try again.";
-      
+      const errorMessage =
+        error.response?.data?.message ||
+        "Error submitting RSVP. Please try again.";
+
       setSnackbar({
         open: true,
         message: errorMessage,
-        severity: "error"
+        severity: "error",
       });
 
       // Only close the dialog if it's not a duplicate RSVP error
@@ -95,26 +98,31 @@ const RSVPForm = ({ eventTitle, eventId }) => {
 
   return (
     <>
-      <Button 
-        className="rsvp-button" 
+      <Button
+        className="rsvp-button"
         onClick={handleOpen}
         variant="contained"
-        color="primary"
+        disableElevation
       >
         RSVP for the Event
       </Button>
 
-      <Dialog 
-        open={open} 
-        onClose={handleClose} 
-        maxWidth="sm" 
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="sm"
         fullWidth
+        PaperProps={{
+          style: {
+            borderRadius: "8px",
+          },
+        }}
       >
         <DialogTitle>RSVP for {eventTitle}</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleSubmit}>
+        <DialogContent dividers>
+          <form onSubmit={handleSubmit} className="rsvp-form">
             <TextField
-              margin="dense"
+              margin="normal"
               name="name"
               label="Full Name"
               type="text"
@@ -128,7 +136,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               helperText={!formData.name.trim() ? "Name is required" : ""}
             />
             <TextField
-              margin="dense"
+              margin="normal"
               name="email"
               label="Email Address"
               type="email"
@@ -142,7 +150,7 @@ const RSVPForm = ({ eventTitle, eventId }) => {
               helperText={!formData.email.trim() ? "Email is required" : ""}
             />
             <TextField
-              margin="dense"
+              margin="normal"
               name="phone"
               label="Phone Number"
               type="tel"
@@ -154,21 +162,31 @@ const RSVPForm = ({ eventTitle, eventId }) => {
             />
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={handleClose} 
+        <DialogActions className="rsvp-dialog-actions">
+          <Button
+            onClick={handleClose}
             disabled={loading}
+            className="cancel-button"
+            variant="outlined"
           >
             Cancel
           </Button>
-          <Button 
-            className="rsvp-submit-button" 
+          <Button
             onClick={handleSubmit}
-            disabled={loading || !formData.name.trim() || !formData.email.trim()}
+            disabled={
+              loading || !formData.name.trim() || !formData.email.trim()
+            }
             variant="contained"
-            color="primary"
+            className="submit-button"
           >
-            {loading ? "Submitting..." : "Submit RSVP"}
+            {loading ? (
+              <div className="loading-wrapper">
+                <CircularProgress size={20} color="inherit" />
+                <span>Submitting...</span>
+              </div>
+            ) : (
+              "Submit RSVP"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -176,13 +194,14 @@ const RSVPForm = ({ eventTitle, eventId }) => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
           variant="filled"
+          className="rsvp-alert"
         >
           {snackbar.message}
         </Alert>
