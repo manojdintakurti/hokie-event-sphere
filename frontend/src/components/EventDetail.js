@@ -49,7 +49,7 @@ function EventDetail() {
     }, [eventId]);
 
     const handleGoBack = () => {
-        navigate(-1); // Goes back to the previous page
+        navigate(-1); 
     };
 
     if (loading) {
@@ -73,8 +73,8 @@ function EventDetail() {
                     {/* Left side: Event heading and details */}
                     <div className="event-info">
                         <h1>{event.title}</h1>
-                        <p>{event.venue}</p>
-                        <p>{renderDescription(event.description)}</p>
+                        {/* <p>{event.venue}</p>
+                        <p>{renderDescription(event.description)}</p> */}
                     </div>
 
                     {/* Right side: Date, Time, Location and RSVP */}

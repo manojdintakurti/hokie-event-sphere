@@ -35,6 +35,10 @@ function CreateEvent() {
     setImage(e.target.files[0]);
   };
 
+  const handleGoBack = () => {
+    navigate(-1); 
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -72,6 +76,7 @@ function CreateEvent() {
   return (
     <div className="create-event-container">
       <h1>Create Event</h1>
+      <button className="back-button" onClick={handleGoBack}>← Back</button>
       {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
