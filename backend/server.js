@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 const eventRoutes = require('./routes/events');
+const userProfileRoutes = require('./routes/userProfile');
 const cors = require('cors');
 
 const app = express();
@@ -16,7 +17,7 @@ cloudinary.config({
 
 // CORS middleware
 app.use(cors({
-  origin: 'https://hokie-event-sphere.vercel.app', 
+  origin: 'https://hokie-event-sphere.vercel.app || http://localhost:3000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -31,6 +32,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 app.use('/api/events', eventRoutes);
+app.use('/api/users', userProfileRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
