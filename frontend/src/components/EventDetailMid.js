@@ -25,13 +25,6 @@ function EventDetailMid(props) {
     const [locationUrl, setLocationUrl] = useState("");
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' // This makes the scroll animation smooth
-        });
-    }, []); // Empty dependency array means this runs once when component mounts
-
     const toggleDescription = () => {
         setShowFullDescription(prevState => !prevState);
     };
