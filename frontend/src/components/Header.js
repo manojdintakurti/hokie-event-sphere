@@ -9,7 +9,7 @@ function Header() {
     return (
         <header className="header">
             <div className="header-left">
-                <img src={require("../Images/logo.png")} alt="Website Logo" className="logo" />
+                <Link to={"/"} ><img src={require("../Images/logo.png")} alt="Website Logo" className="logo" /></Link>
             </div>
 
             <div className="header-center">
@@ -22,8 +22,8 @@ function Header() {
                 {
                     isSignedIn ? (
                         <SignedIn>
-                            <span>Hello, {user.fullName}</span>
-                            <UserButton userProfileMode="navigation" userProfileUrl="/profile"/>
+                            <span className={"Profile-Name"}>Hello, {user.fullName}</span>
+                            <UserButton userProfileMode="navigation" userProfileUrl="/profile" className={"profile-photo"}/>
                         </SignedIn>
                     ) : (
                         <div className="sign-in-sign-up-slot">

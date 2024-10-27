@@ -1,14 +1,15 @@
 import React from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { Link } from 'react-router-dom';
 import '../styles/global.css';
 import Body from "./HomeBody";
+import ProfileDialog from "./ProfileDialoug";
 
 function Home() {
   const { isSignedIn, user } = useUser();
 
   return (
     <div className="container">
+        {isSignedIn && <ProfileDialog />}
       <Body />
     </div>
   );
