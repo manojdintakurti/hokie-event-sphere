@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { CardContent, Box, Typography, IconButton, Divider, Grid, MenuItem, Chip, Avatar, TextField, Select, Button } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { styled } from '@mui/system';
 import Card from '@mui/material/Card';
-import { purple } from '@mui/material/colors';
-import { useUser } from "@clerk/clerk-react"; // Clerk hook for user information
+import { useUser } from "@clerk/clerk-react";
+import axios from "axios"; // Clerk hook for user information
+import "../styles/UserProfile.css";
 
 const interestOptions = ["Technology", "Sports", "Music", "Art", "Travel", "Gaming", "Fitness", "Cooking"];
+const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY; // Add your geocoding API key here
 
 const StyledCard = styled(Card)(({ theme }) => ({
     background: 'linear-gradient(135deg, #ffffff, #ffffff)',
@@ -27,7 +29,56 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
             phoneNumber: user?.phoneNumbers?.[0]?.phoneNumber || '',
             imageUrl: user?.imageUrl || '',
         }));
+
+        // Check if address fields are empty and get user's location if they are
+        if (!formData.address.street && !formData.address.city && !formData.address.state) {
+            getUserLocation();
+        }
     }, [user, setFormData]);
+
+    const getUserLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const address = await fetchAddressFromCoords(latitude, longitude);
+                    if (address) {
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            address: address,
+                        }));
+                    }
+                },
+                (error) => {
+                    console.error("Error fetching location:", error);
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
+
+    const fetchAddressFromCoords = async (latitude, longitude) => {
+        try {
+            const response = await fetch(
+                `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${GEOCODING_API_KEY}`
+            );
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                const location = data.results[0].components;
+                return {
+                    street: location.road || '',
+                    city: location.city || location.town || location.village || '',
+                    state: location.state || '',
+                    postalCode: location.postcode || '',
+                    country: location.country || '',
+                };
+            }
+        } catch (error) {
+            console.error("Error fetching address:", error);
+        }
+        return null;
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,11 +114,19 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('User data submitted:', formData);
-        alert('Profile updated successfully!');
-        onSave(); // Close the dialog after saving
+        try {
+            // Send formData to the backend /profile/save endpoint
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/profile/save`, formData);
+
+            console.log('User data submitted:', response.data);
+            alert('Profile updated successfully!');
+            onSave(); // Close the dialog after saving
+        } catch (error) {
+            console.error('Error saving profile data:', error);
+            alert('Failed to update profile. Please try again.');
+        }
     };
 
     return (
@@ -246,7 +305,7 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
                         ))}
                     </Box>
 
-                    <Button type="submit" variant="contained" color="primary" sx={{ mt: 4 }}>
+                    <Button type="submit" className="profile-save-button" variant="contained" sx={{ mt: 4 }}>
                         Save Profile
                     </Button>
                 </form>
