@@ -32,7 +32,7 @@ function Footer() {
 
                 {/* Copyright */}
                 <p className="footer-copyright">
-                    Non Copyrighted © 2024 Upload by MaVi technologies
+                    Non Copyrighted © 2024 Hokie Event Sphere. All Rights Reserved.
                 </p>
             </div>
         </footer>
