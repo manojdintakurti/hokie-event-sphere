@@ -15,23 +15,6 @@ function EventDetail() {
   const toggleDescription = () => {
     setShowFullDescription((prevState) => !prevState);
   };
-  const renderDescription = (description) => {
-    // Check if description is more than 5 lines (rough estimate with character length)
-    const maxLength = 300; // Adjust this length based on average line size
-    if (description.length > maxLength) {
-      return (
-        <>
-          {showFullDescription
-            ? description
-            : `${description.substring(0, maxLength)}...`}
-          <button className="read-more-btn" onClick={toggleDescription}>
-            {showFullDescription ? "Read Less" : "Read More"}
-          </button>
-        </>
-      );
-    }
-    return description;
-  };
 
   useEffect(() => {
     // Fetch the specific event based on eventId
@@ -79,8 +62,6 @@ function EventDetail() {
           {/* Left side: Event heading and details */}
           <div className="event-info">
             <h1>{event.title}</h1>
-            {/* <p>{event.venue}</p>
-                        <p>{renderDescription(event.description)}</p> */}
           </div>
 
           {/* Right side: Date, Time, Location and RSVP */}

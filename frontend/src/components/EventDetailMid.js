@@ -21,16 +21,23 @@ function EventDetailMid(props) {
         eventTitle
     } = props;
 
-    const [showFullDescription, setShowFullDescription] = useState(false); // State for toggling description
-    const [locationUrl, setLocationUrl] = useState("");  // To store the map URL
-    const [error, setError] = useState(null);  // To handle any errors
+    const [showFullDescription, setShowFullDescription] = useState(false);
+    const [locationUrl, setLocationUrl] = useState("");
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // This makes the scroll animation smooth
+        });
+    }, []); // Empty dependency array means this runs once when component mounts
 
     const toggleDescription = () => {
         setShowFullDescription(prevState => !prevState);
     };
 
     const renderDescription = (description) => {
-        const maxLength = 300; // Character limit for truncating the description
+        const maxLength = 300;
         if (description.length > maxLength) {
             return (
                 <>
@@ -41,14 +48,12 @@ function EventDetailMid(props) {
                 </>
             );
         }
-        return description; // Return full description if it's short
+        return description;
     };
 
-    // The URL for sharing (could be the event page URL)
     const shareUrl = window.location.href;
-    const title = eventTitle || "Join this exciting event!"; // Event title for sharing
+    const title = eventTitle || "Join this exciting event!";
 
-    // Fetch map location based on the venue address
     useEffect(() => {
         const apiKey = "AIzaSyCO3BUVFeZVl6K-9n_M76ptwplqj9cEIAk";
         const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(venue)}&key=${apiKey}`;
@@ -85,7 +90,7 @@ function EventDetailMid(props) {
 
                 <h4>Organizer Contact</h4>
                 <p>Please contact <a href={`mailto:${organizerEmail}`} target="_blank"
-                                     rel="noopener noreferrer">{organizerEmail}</a> for more details.</p>
+                                   rel="noopener noreferrer">{organizerEmail}</a> for more details.</p>
 
                 <h4>Registration Fee</h4>
                 <p>${registrationFee}</p>
