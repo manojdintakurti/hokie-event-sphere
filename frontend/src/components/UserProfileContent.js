@@ -31,7 +31,6 @@ const interestOptions = [
   "Cooking",
 ];
 const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY;
-console.log('Geocoding api is: ', GEOCODING_API_KEY) 
 
 const StyledCard = styled(Card)(({ theme }) => ({
   background: "linear-gradient(135deg, #ffffff, #ffffff)",
