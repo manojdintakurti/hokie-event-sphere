@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cloudinary = require('cloudinary').v2;
 const eventRoutes = require('./routes/events');
-const userProfileRoutes = require('./routes/userProfile');
 const cors = require('cors');
 
 const app = express();
@@ -32,7 +31,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 app.use('/api/events', eventRoutes);
-app.use('/api/users', userProfileRoutes);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
