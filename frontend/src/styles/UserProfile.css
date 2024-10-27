@@ -71,3 +71,11 @@
 .profile-submit-button:hover {
     background-color: #0056b3;
 }
+
+.profile-save-button {
+    background-color: #7c3aed !important;
+}
+
+.profile-save-button:hover {
+    background-color: #6a27db;
+}
