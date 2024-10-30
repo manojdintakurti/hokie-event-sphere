@@ -10,8 +10,8 @@ function Footer() {
 
                 {/* Subscription form */}
                 <div className="subscribe-section">
-                    <input type="email" placeholder="Enter your mail" className="subscribe-input" />
-                    <button className="subscribe-button">Subscribe</button>
+                    <input type="email" placeholder="Enter your email" className="subscribe-input" />
+                    <button className="subscribe-button">Stay Updated</button>
                 </div>
 
                 {/* Footer links */}
@@ -32,7 +32,7 @@ function Footer() {
 
                 {/* Copyright */}
                 <p className="footer-copyright">
-                    Non Copyrighted © 2024 Hokie Event Sphere. All Rights Reserved.
+                    © 2024 Hokie Event Sphere | Connecting Hokies Through Amazing Events | Virginia Tech
                 </p>
             </div>
         </footer>
