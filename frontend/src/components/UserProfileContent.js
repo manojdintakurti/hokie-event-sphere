@@ -3,8 +3,6 @@ import {
   CardContent,
   Box,
   Typography,
-  IconButton,
-  Divider,
   Grid,
   MenuItem,
   Chip,
@@ -14,7 +12,6 @@ import {
   Button,
   FormControl,
   InputLabel,
-  Paper,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { styled } from "@mui/system";
