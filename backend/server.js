@@ -28,8 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'events_db', // Force connection to events_db
-  useNewUrlParser: true,
-  useUnifiedTopology: true
 }).then(() => {
   console.log('Successfully connected to MongoDB Atlas - Database: events_db');
   // Log additional connection details
