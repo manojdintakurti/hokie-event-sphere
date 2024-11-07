@@ -3,8 +3,6 @@ import {
   CardContent,
   Box,
   Typography,
-  IconButton,
-  Divider,
   Grid,
   MenuItem,
   Chip,
@@ -12,6 +10,8 @@ import {
   TextField,
   Select,
   Button,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { styled } from "@mui/system";
@@ -30,14 +30,34 @@ const interestOptions = [
   "Fitness",
   "Cooking",
 ];
-const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY; // Add your geocoding API key here
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  background: "linear-gradient(135deg, #ffffff, #ffffff)",
-  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-  borderRadius: "15px",
-  padding: theme.spacing(3),
+  background: "#ffffff",
+  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+  borderRadius: "20px",
+  padding: theme.spacing(4),
+  maxWidth: 1000,
+  margin: "0 auto",
 }));
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  fontSize: "1.25rem",
+  fontWeight: 600,
+  color: "#1a1a1a",
+  marginBottom: theme.spacing(3),
+  paddingBottom: theme.spacing(1),
+  borderBottom: "2px solid #7c3aed",
+  display: "inline-block",
+}));
+
+const FormSection = styled(Box)(({ theme }) => ({
+  backgroundColor: "#f8fafc",
+  borderRadius: "12px",
+  padding: theme.spacing(3),
+  marginBottom: theme.spacing(3),
+}));
+
+const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY;
 
 const UserProfileContent = ({ formData, setFormData, onSave }) => {
   const { user } = useUser(); // Fetch user data from Clerk
@@ -161,21 +181,35 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
 
   return (
     <StyledCard>
-      <CardContent>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+      <CardContent sx={{ p: 2 }}>
+        {/* Profile Header */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: 4,
+            p: 3,
+            backgroundColor: "#f8fafc",
+            borderRadius: "12px",
+          }}
+        >
           <Avatar
             src={formData.imageUrl}
             sx={{
-              width: "100px",
-              height: "100px",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)",
+              width: "120px",
+              height: "120px",
+              boxShadow: "0px 4px 14px rgba(0, 0, 0, 0.1)",
+              border: "4px solid white",
             }}
           />
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
+          <Box sx={{ ml: 3 }}>
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: "600", color: "#1a1a1a", mb: 1 }}
+            >
               {formData.fullName}
             </Typography>
-            <Typography color="text.secondary">
+            <Typography color="text.secondary" sx={{ mb: 2 }}>
               {formData.emailAddresses}
             </Typography>
             <label htmlFor="icon-button-file">
@@ -186,182 +220,256 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
                 type="file"
                 onChange={handlePhotoUpload}
               />
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
+              <Button
+                variant="outlined"
+                startIcon={<PhotoCamera />}
                 component="span"
+                sx={{
+                  borderColor: "#7c3aed",
+                  color: "#7c3aed",
+                  "&:hover": {
+                    borderColor: "#6a27db",
+                    backgroundColor: "rgba(124, 58, 237, 0.04)",
+                  },
+                }}
               >
-                <PhotoCamera />
-              </IconButton>
+                Change Photo
+              </Button>
             </label>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
-
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Full Name"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Select
-                fullWidth
-                label="Gender"
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                displayEmpty
-              >
-                <MenuItem value="">
-                  <em>Select Gender</em>
-                </MenuItem>
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Country"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Select
-                fullWidth
-                label="Language"
-                name="language"
-                value={formData.language}
-                onChange={handleChange}
-                displayEmpty
-              >
-                <MenuItem value="">
-                  <em>Select Language</em>
-                </MenuItem>
-                <MenuItem value="English">English</MenuItem>
-                <MenuItem value="Spanish">Spanish</MenuItem>
-                <MenuItem value="French">French</MenuItem>
-                <MenuItem value="German">German</MenuItem>
-                <MenuItem value="Chinese">Chinese</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Email Address"
-                name="emailAddresses"
-                value={formData.emailAddresses}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Street"
-                name="street"
-                value={formData.address.street}
-                onChange={handleAddressChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="City"
-                name="city"
-                value={formData.address.city}
-                onChange={handleAddressChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="State"
-                name="state"
-                value={formData.address.state}
-                onChange={handleAddressChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Postal Code"
-                name="postalCode"
-                value={formData.address.postalCode}
-                onChange={handleAddressChange}
-                variant="outlined"
-              />
-            </Grid>
-          </Grid>
+          {/* Personal Information Section */}
+          <FormSection>
+            <SectionTitle>Personal Information</SectionTitle>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Full Name"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
 
-          <Divider sx={{ my: 3 }} />
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="gender-label">Gender</InputLabel>
+                  <Select
+                    labelId="gender-label"
+                    label="Gender"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    sx={{ backgroundColor: "white" }}
+                  >
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-          <Typography variant="body1" sx={{ mb: 1, fontWeight: "bold" }}>
-            Interests
-          </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-            {interestOptions.map((interest) => (
-              <Chip
-                key={interest}
-                label={interest}
-                clickable
-                onClick={() => handleInterestToggle(interest)}
-                sx={{
-                  "&.MuiChip-root.MuiChip-filled": {
-                    backgroundColor: "#7c3aed",
-                    color: "white",
-                    "&:hover": {
-                      backgroundColor: "#6a27db",
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Country"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel id="language-label">Language</InputLabel>
+                  <Select
+                    labelId="language-label"
+                    label="Language"
+                    name="language"
+                    value={formData.language}
+                    onChange={handleChange}
+                    sx={{ backgroundColor: "white" }}
+                  >
+                    <MenuItem value="English">English</MenuItem>
+                    <MenuItem value="Spanish">Spanish</MenuItem>
+                    <MenuItem value="French">French</MenuItem>
+                    <MenuItem value="German">German</MenuItem>
+                    <MenuItem value="Chinese">Chinese</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </FormSection>
+
+          {/* Contact Information Section */}
+          <FormSection>
+            <SectionTitle>Contact Information</SectionTitle>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Email Address"
+                    name="emailAddresses"
+                    value={formData.emailAddresses}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Phone Number"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </FormSection>
+
+          {/* Address Section */}
+          <FormSection>
+            <SectionTitle>Address Information</SectionTitle>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Street"
+                    name="street"
+                    value={formData.address.street}
+                    onChange={handleAddressChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="City"
+                    name="city"
+                    value={formData.address.city}
+                    onChange={handleAddressChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="State"
+                    name="state"
+                    value={formData.address.state}
+                    onChange={handleAddressChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth variant="outlined">
+                  <TextField
+                    label="Postal Code"
+                    name="postalCode"
+                    value={formData.address.postalCode}
+                    onChange={handleAddressChange}
+                    variant="outlined"
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ backgroundColor: "white" }}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </FormSection>
+
+          {/* Interests Section */}
+          <FormSection>
+            <SectionTitle>Interests</SectionTitle>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.5 }}>
+              {interestOptions.map((interest) => (
+                <Chip
+                  key={interest}
+                  label={interest}
+                  clickable
+                  onClick={() => handleInterestToggle(interest)}
+                  sx={{
+                    fontSize: "0.9rem",
+                    height: "32px",
+                    "&.MuiChip-root.MuiChip-filled": {
+                      backgroundColor: "#7c3aed",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "#6a27db",
+                      },
                     },
-                  },
-                  "&.MuiChip-outlined": {
-                    borderColor: "#e5e7eb",
-                    "&:hover": {
-                      backgroundColor: "rgba(124, 58, 237, 0.04)",
+                    "&.MuiChip-outlined": {
+                      borderColor: "#7c3aed",
+                      color: "#7c3aed",
+                      "&:hover": {
+                        backgroundColor: "rgba(124, 58, 237, 0.04)",
+                      },
                     },
-                  },
-                }}
-                color={
-                  formData.interests.includes(interest) ? "primary" : "default"
-                }
-                variant={
-                  formData.interests.includes(interest) ? "filled" : "outlined"
-                }
-              />
-            ))}
-          </Box>
+                  }}
+                  color={
+                    formData.interests.includes(interest)
+                      ? "primary"
+                      : "default"
+                  }
+                  variant={
+                    formData.interests.includes(interest)
+                      ? "filled"
+                      : "outlined"
+                  }
+                />
+              ))}
+            </Box>
+          </FormSection>
+
           <Button
             type="submit"
-            className="profile-save-button"
             variant="contained"
-            sx={{ mt: 4 }}
+            fullWidth
+            sx={{
+              mt: 4,
+              mb: 2,
+              py: 1.5,
+              bgcolor: "#7c3aed",
+              fontSize: "1rem",
+              fontWeight: "600",
+              textTransform: "none",
+              borderRadius: "8px",
+              "&:hover": {
+                bgcolor: "#6a27db",
+              },
+            }}
           >
-            Save Profile
+            Save Changes
           </Button>
         </form>
       </CardContent>
