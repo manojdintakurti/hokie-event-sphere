@@ -35,7 +35,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   // Log additional connection details
   const connection = mongoose.connection;
   console.log('Current database:', connection.db.databaseName);
-  console.log('Current collections:', connection.collections);
 }).catch((error) => {
   console.error('MongoDB Atlas connection error:', error);
 });
