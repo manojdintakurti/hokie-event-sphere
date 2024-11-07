@@ -16,7 +16,7 @@ cloudinary.config({
 
 // CORS middleware
 app.use(cors({
-  origin: 'https://hokie-event-sphere.vercel.app', 
+  origin: 'http://localhost:3000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -27,8 +27,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  dbName: 'events_db', 
+  .then(() => {
+    console.log('Connected to MongoDB');
+    const connection = mongoose.connection;
+    console.log('Current database:', connection.db.databaseName);
+  }).catch(err => console.error('MongoDB connection error:', err));
 
 app.use('/api/events', eventRoutes);
 
