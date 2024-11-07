@@ -146,7 +146,7 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
     try {
       // Send formData to the backend /profile/save endpoint
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/profile/save`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/events/profile/save`,
         formData
       );
 
@@ -355,7 +355,6 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
               />
             ))}
           </Box>
-
           <Button
             type="submit"
             className="profile-save-button"

@@ -18,7 +18,7 @@ function EventDetail() {
 
   useEffect(() => {
     // Fetch the specific event based on eventId
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/getById/${eventId}`)
       .then((response) => response.json())
       .then((data) => {
         setEvent(data); // Set the fetched event data to state

@@ -4,6 +4,7 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 const Event = require('../models/Event');
+const UserProfile = require('../models/UserProfile');
 const emailService = require('../services/emailService');
 
 // Configure multer to use memory storage
@@ -134,7 +135,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET route for retrieving a specific event by ID
-router.get('/:id', async (req, res) => {
+router.get('/getById/:id', async (req, res) => {
   try {
     // Validate event ID format
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -152,6 +153,83 @@ router.get('/:id', async (req, res) => {
       return res.status(400).json({ message: "Invalid event ID format" });
     }
     res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+router.post('/profile/save', cors(corsOptions), async (req, res) => {
+  const {
+    fullName,
+    gender,
+    country,
+    language,
+    emailAddresses,
+    phoneNumber,
+    interests,
+    address,
+    imageUrl,
+  } = req.body;
+  console.log(req.body);
+  try {
+    // Check if a profile with this email already exists
+    let userProfile = await UserProfile.findOne({ emailAddresses });
+
+    if (userProfile) {
+      // Update existing profile
+      userProfile = await UserProfile.findOneAndUpdate(
+        { emailAddresses },
+        {
+          fullName,
+          gender,
+          country,
+          language,
+          phoneNumber,
+          interests,
+          address,
+          imageUrl,
+        },
+        { new: true }
+      );
+    } else {
+      // Create new profile
+      userProfile = new UserProfile({
+        fullName,
+        gender,
+        country,
+        language,
+        emailAddresses,
+        phoneNumber,
+        interests,
+        address,
+        imageUrl,
+      });
+      await userProfile.save();
+    }
+
+    res.status(201).json(userProfile);
+  } catch (error) {
+    console.error('Error saving user profile:', error);
+    res.status(500).json({ message: "Error saving profile", error: error.message });
+  }
+});
+
+
+router.get('/profile', cors(corsOptions), async (req, res) => {
+  const { email } = req.query; // Retrieve email from query parameters
+
+  try {
+    // Find the user profile by email
+    const userProfile = await UserProfile.findOne({ emailAddresses: email });
+    
+    if (!userProfile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    res.status(200).json(userProfile);
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Error fetching profile', error: error.message });
   }
 });
 
