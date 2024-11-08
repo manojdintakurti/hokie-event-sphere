@@ -5,8 +5,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
 } from "@mui/material";
 import UserProfileContent from "./UserProfileContent";
 import axios from "axios";
