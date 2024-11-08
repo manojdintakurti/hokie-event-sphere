@@ -28,28 +28,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    margin: 20px 0;
+    height: 44px; /* Fixed height for the container */
 }
 
 .subscribe-input {
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    margin-right: 10px;
-    font-size: 16px;
+    height: 100%;
     width: 250px;
-    margin-bottom: 0px;
-    margin-top: 10px;
+    padding: 0 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 10px;
 }
 
 .subscribe-button {
+    height: 100%;
     background-color: #6b3fe1;
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 20px;
+    padding: 0 20px;
     cursor: pointer;
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .subscribe-button:hover {

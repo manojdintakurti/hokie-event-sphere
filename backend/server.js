@@ -25,7 +25,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'events_db', // Force connection to events_db
 }).then(() => {
@@ -47,3 +47,4 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5002; 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

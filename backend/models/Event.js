@@ -12,6 +12,9 @@ const eventSchema = new mongoose.Schema({
   description: { type: String, required: true },
   imageUrl: { type: String },
   organizerId: { type: String, required: true },
+  // New fields for categories
+  main_category: { type: String, default: 'Others' },
+  sub_category: { type: String, default: 'Miscellaneous Events' },
   rsvps:[{
     name: { type: String, required: true },
     email: { type: String, required: true },

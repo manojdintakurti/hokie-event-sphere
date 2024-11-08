@@ -26,3 +26,6 @@ backend/.env
 
 # Frontend
 frontend/.env
+
+# Categorizer
+categorizer/.env 

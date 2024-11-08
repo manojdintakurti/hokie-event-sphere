@@ -35,7 +35,41 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
     });
 
     const savedEvent = await newEvent.save();
-    res.status(201).json(savedEvent);
+
+    try {
+      //calling fastapi function to categorize event
+      const categorizerResponse = await axios.post(
+        `${process.env.FASTAPI_URL}/categorize/${savedEvent._id}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (categorizerResponse.data.success && categorizerResponse.data.data) {
+        // Update the event with the categorization results
+        const updatedEvent = await Event.findByIdAndUpdate(
+          savedEvent._id,
+          {
+          main_category: categorizerResponse.data.data.main_category,
+          sub_category: categorizerResponse.data.data.sub_category,
+          description: categorizerResponse.data.data.description 
+          },
+          { new : true} // return the updated document
+        );
+        res.status(201).json(updatedEvent);
+      } else {
+        // If categorization fails, still return the saved event
+        console.warn('Event categorization failed:', categorizerResponse.data.error);
+        res.status(201).json(savedEvent);
+      }
+    } catch (error) {
+      // If categorizer call fails, log the error but still return the saved event
+      console.error('Error calling categorizer:', categorizerError);
+      res.status(201).json(savedEvent);
+    }
   } catch (error) {
     console.error('Error creating event:', error);
     res.status(400).json({ message: error.message });
