@@ -28,7 +28,8 @@ const interestOptions = [
   "Travel",
   "Gaming",
   "Fitness",
-  "Cooking",
+  "Social Events",
+  "Others"
 ];
 
 const StyledCard = styled(Card)(({ theme }) => ({
