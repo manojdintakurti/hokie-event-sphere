@@ -58,8 +58,6 @@ const ProfileDialog = () => {
         fetchProfileData();
     }, [isSignedIn, user]);
 
-
-
   const handleClose = () => {
     setOpen(false);
   };
