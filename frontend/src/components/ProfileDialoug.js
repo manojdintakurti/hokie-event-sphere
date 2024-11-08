@@ -39,12 +39,13 @@ const ProfileDialog = () => {
             });
             const profileData = response.data;
             const isProfileComplete = profileData && profileData.address && profileData.interests && profileData.interests.length > 0;
-            if (!isProfileComplete) {
+            if (!isProfileComplete || ) {
                 setOpen(true);
             } else {
                 setFormData(profileData);
             }
         } catch (error) {
+          setOpen(true);
             console.error('Error fetching profile data:', error);
         } finally {
             setLoading(false);
