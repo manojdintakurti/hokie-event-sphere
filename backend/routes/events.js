@@ -4,6 +4,9 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 const Event = require('../models/Event');
+const UserProfile = require('../models/UserProfile');
+const ClickCount = require('../models/ClickCount');
+
 const emailService = require('../services/emailService');
 
 // Configure multer to use memory storage
@@ -168,7 +171,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET route for retrieving a specific event by ID
-router.get('/:id', async (req, res) => {
+router.get('/getById/:id', async (req, res) => {
   try {
     // Validate event ID format
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -189,4 +192,119 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+
+
+router.post('/profile/save', cors(corsOptions), async (req, res) => {
+  const {
+    fullName,
+    gender,
+    country,
+    language,
+    emailAddresses,
+    phoneNumber,
+    interests,
+    address,
+    imageUrl,
+  } = req.body;
+  try {
+    // Check if a profile with this email already exists
+    let userProfile = await UserProfile.findOne({ emailAddresses });
+
+    if (userProfile) {
+      // Update existing profile
+      userProfile = await UserProfile.findOneAndUpdate(
+        { emailAddresses },
+        {
+          fullName,
+          gender,
+          country,
+          language,
+          phoneNumber,
+          interests,
+          address,
+          imageUrl,
+        },
+        { new: true }
+      );
+    } else {
+      // Create new profile
+      userProfile = new UserProfile({
+        fullName,
+        gender,
+        country,
+        language,
+        emailAddresses,
+        phoneNumber,
+        interests,
+        address,
+        imageUrl,
+      });
+      await userProfile.save();
+    }
+
+    res.status(201).json(userProfile);
+  } catch (error) {
+    console.error('Error saving user profile:', error);
+    res.status(500).json({ message: "Error saving profile", error: error.message });
+  }
+});
+
+
+router.get('/profile', cors(corsOptions), async (req, res) => {
+  const { email } = req.query; // Retrieve email from query parameters
+
+  try {
+    // Find the user profile by email
+    const userProfile = await UserProfile.findOne({ emailAddresses: email });
+    
+    if (!userProfile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    res.status(200).json(userProfile);
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Error fetching profile', error: error.message });
+  }
+});
+// Route to log or increment click count
+router.post('/log-click', async (req, res) => {
+  const { userId, category, subcategory } = req.body;
+console.log(req.body);
+  if (!userId || !category || !subcategory) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    // Find or create the document for the user and category
+    const clickCountDoc = await ClickCount.findOneAndUpdate(
+      { userId, category },
+      { $inc: { categoryCount: 1 } }, // Increment the main category count
+      { new: true, upsert: true }
+    );
+
+    // Check if the subcategory already exists in the subCategories array
+    const subCategoryIndex = clickCountDoc.subCategories.findIndex(
+      (sub) => sub.subCategory === subcategory
+    );
+
+    if (subCategoryIndex >= 0) {
+      // If the subcategory exists, increment its count
+      clickCountDoc.subCategories[subCategoryIndex].subCategoryCount += 1;
+    } else {
+      // If it doesn't exist, add it to the array
+      clickCountDoc.subCategories.push({
+        subCategory: subcategory,
+        subCategoryCount: 1
+      });
+    }
+
+    // Save the document with updated counts
+    await clickCountDoc.save();
+
+    res.status(201).json({ message: 'Click count updated successfully', clickCountDoc });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating click count', error });
+  }
+});
 module.exports = router;

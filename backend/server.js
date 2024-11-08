@@ -38,8 +38,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use('/api/events', eventRoutes);
-
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

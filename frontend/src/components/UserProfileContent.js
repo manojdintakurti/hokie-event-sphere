@@ -17,7 +17,7 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import { styled } from "@mui/system";
 import Card from "@mui/material/Card";
 import { useUser } from "@clerk/clerk-react";
-import axios from "axios";
+import axios from "axios"; // Clerk hook for user information
 import "../styles/UserProfile.css";
 
 const interestOptions = [
@@ -61,7 +61,6 @@ const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY;
 
 const UserProfileContent = ({ formData, setFormData, onSave }) => {
   const { user } = useUser(); // Fetch user data from Clerk
-
   useEffect(() => {
     // Prefill form data with user details if available
     setFormData((prevData) => ({
@@ -166,7 +165,7 @@ const UserProfileContent = ({ formData, setFormData, onSave }) => {
     try {
       // Send formData to the backend /profile/save endpoint
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/profile/save`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/events/profile/save`,
         formData
       );
 
