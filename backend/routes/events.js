@@ -6,6 +6,7 @@ const cors = require('cors');
 const Event = require('../models/Event');
 const UserProfile = require('../models/UserProfile');
 const ClickCount = require('../models/ClickCount');
+const axios = require('axios');
 
 const emailService = require('../services/emailService');
 
@@ -193,6 +194,38 @@ router.get('/getById/:id', async (req, res) => {
 });
 
 
+const GEOCODING_API_KEY = process.env.GEOCODING_API_KEY;
+async function getCoordinatesFromAddress(address) {
+  try {
+    const { street, city, state, postalCode, country } = address;
+    const query = `${street}, ${city}, ${state}, ${postalCode}, ${country}`;
+
+    console.log("Making request to OpenCage with query:", query);
+    console.log("Using API Key:", GEOCODING_API_KEY);
+
+    const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
+      params: {
+        q: query,
+        key: GEOCODING_API_KEY,
+      },
+    });
+
+    if (response.data.results.length > 0) {
+      const { lat, lng } = response.data.results[0].geometry;
+      console.log("Coordinates fetched:", { latitude: lat, longitude: lng });
+      return { latitude: lat, longitude: lng };
+    } else {
+      throw new Error("No results found for the given address.");
+    }
+  } catch (error) {
+    if (error.response) {
+      console.error("Error response from OpenCage API:", error.response.status, error.response.data);
+    } else {
+      console.error("Error fetching coordinates:", error.message);
+    }
+    throw error;
+  }
+}
 
 router.post('/profile/save', cors(corsOptions), async (req, res) => {
   const {
@@ -207,24 +240,49 @@ router.post('/profile/save', cors(corsOptions), async (req, res) => {
     imageUrl,
   } = req.body;
   try {
-    // Check if a profile with this email already exists
     let userProfile = await UserProfile.findOne({ emailAddresses });
+
+    // Extract coordinates if available; otherwise, generate them
+    let { street, city, state, postalCode, country: addressCountry, coordinates } = address || {};
+    let latitude = coordinates?.latitude || null;
+    let longitude = coordinates?.longitude || null;
+
+    if (!latitude || !longitude) {
+      const newCoordinates = await getCoordinatesFromAddress({
+        street,
+        city,
+        state,
+        postalCode,
+        country: addressCountry,
+      });
+      latitude = newCoordinates.latitude;
+      longitude = newCoordinates.longitude;
+    }
+
+    const updatedAddress = {
+      street,
+      city,
+      state,
+      postalCode,
+      country: addressCountry,
+      coordinates: { latitude, longitude },
+    };
 
     if (userProfile) {
       // Update existing profile
       userProfile = await UserProfile.findOneAndUpdate(
-        { emailAddresses },
-        {
-          fullName,
-          gender,
-          country,
-          language,
-          phoneNumber,
-          interests,
-          address,
-          imageUrl,
-        },
-        { new: true }
+          { emailAddresses },
+          {
+            fullName,
+            gender,
+            country,
+            language,
+            phoneNumber,
+            interests,
+            address: updatedAddress,
+            imageUrl,
+          },
+          { new: true }
       );
     } else {
       // Create new profile
@@ -236,7 +294,7 @@ router.post('/profile/save', cors(corsOptions), async (req, res) => {
         emailAddresses,
         phoneNumber,
         interests,
-        address,
+        address: updatedAddress,
         imageUrl,
       });
       await userProfile.save();
@@ -248,8 +306,6 @@ router.post('/profile/save', cors(corsOptions), async (req, res) => {
     res.status(500).json({ message: "Error saving profile", error: error.message });
   }
 });
-
-
 router.get('/profile', cors(corsOptions), async (req, res) => {
   const { email } = req.query; // Retrieve email from query parameters
 
