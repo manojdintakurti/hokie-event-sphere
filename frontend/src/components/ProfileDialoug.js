@@ -5,8 +5,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
 } from "@mui/material";
 import UserProfileContent from "./UserProfileContent";
 import axios from "axios";
@@ -59,8 +57,6 @@ const ProfileDialog = () => {
         };
         fetchProfileData();
     }, [isSignedIn, user]);
-
-
 
   const handleClose = () => {
     setOpen(false);
