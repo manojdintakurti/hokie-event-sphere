@@ -6,7 +6,6 @@ import ProfileDialog from "./ProfileDialoug";
 
 function Home() {
   const { isSignedIn, user } = useUser();
-
   return (
     <div className="container">
         {isSignedIn && <ProfileDialog />}

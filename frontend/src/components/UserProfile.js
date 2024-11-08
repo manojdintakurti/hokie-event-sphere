@@ -30,7 +30,7 @@ const UserProfilePage = () => {
         const fetchProfileData = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/profile`, {
-                    params: { email: user.email }
+                    params: { email: user?.emailAddresses }
                 });
                 
                 const profileData = response.data;

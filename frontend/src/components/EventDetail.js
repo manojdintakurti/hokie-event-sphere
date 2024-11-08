@@ -17,20 +17,41 @@ function EventDetail() {
   };
 
   useEffect(() => {
-    // Fetch the specific event based on eventId
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/getById/${eventId}`)
       .then((response) => response.json())
       .then((data) => {
-        setEvent(data); // Set the fetched event data to state
+        setEvent(data);
         setLoading(false);
-
-        console.log("Fetched event:", data);
+        logClickCount(data);
       })
       .catch((error) => {
         console.error("Error fetching event:", error);
         setLoading(false);
       });
   }, [eventId]);
+  const logClickCount = (eventData) => {
+    if (!eventData) return;
+    const email= user?.emailAddresses;
+    console.log(email);
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/log-click`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user?._id,
+        category: eventData.main_category,
+        subcategory: eventData.sub_category,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Click count logged:", data);
+      })
+      .catch((error) => {
+        console.error("Error logging click count:", error);
+      });
+  };
 
   const handleGoBack = () => {
     navigate(-1);

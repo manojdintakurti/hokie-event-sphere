@@ -5,6 +5,8 @@ const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 const Event = require('../models/Event');
 const UserProfile = require('../models/UserProfile');
+const ClickCount = require('../models/ClickCount');
+
 const emailService = require('../services/emailService');
 
 // Configure multer to use memory storage
@@ -170,7 +172,6 @@ router.post('/profile/save', cors(corsOptions), async (req, res) => {
     address,
     imageUrl,
   } = req.body;
-  console.log(req.body);
   try {
     // Check if a profile with this email already exists
     let userProfile = await UserProfile.findOne({ emailAddresses });
@@ -232,5 +233,44 @@ router.get('/profile', cors(corsOptions), async (req, res) => {
     res.status(500).json({ message: 'Error fetching profile', error: error.message });
   }
 });
+// Route to log or increment click count
+router.post('/log-click', async (req, res) => {
+  const { userId, category, subcategory } = req.body;
+console.log(req.body);
+  if (!userId || !category || !subcategory) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
+  try {
+    // Find or create the document for the user and category
+    const clickCountDoc = await ClickCount.findOneAndUpdate(
+      { userId, category },
+      { $inc: { categoryCount: 1 } }, // Increment the main category count
+      { new: true, upsert: true }
+    );
+
+    // Check if the subcategory already exists in the subCategories array
+    const subCategoryIndex = clickCountDoc.subCategories.findIndex(
+      (sub) => sub.subCategory === subcategory
+    );
+
+    if (subCategoryIndex >= 0) {
+      // If the subcategory exists, increment its count
+      clickCountDoc.subCategories[subCategoryIndex].subCategoryCount += 1;
+    } else {
+      // If it doesn't exist, add it to the array
+      clickCountDoc.subCategories.push({
+        subCategory: subcategory,
+        subCategoryCount: 1
+      });
+    }
+
+    // Save the document with updated counts
+    await clickCountDoc.save();
+
+    res.status(201).json({ message: 'Click count updated successfully', clickCountDoc });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating click count', error });
+  }
+});
 module.exports = router;

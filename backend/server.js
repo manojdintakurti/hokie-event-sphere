@@ -25,14 +25,19 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+
+mongoose.connect(process.env.MONGODB_URI, {
+  dbName: 'events_db', // Force connection to events_db
+}).then(() => {
+  console.log('Successfully connected to MongoDB Atlas - Database: events_db');
+  // Log additional connection details
+  const connection = mongoose.connection;
+  console.log('Current database:', connection.db.databaseName);
+}).catch((error) => {
+  console.error('MongoDB Atlas connection error:', error);
+});
 
 app.use('/api/events', eventRoutes);
-
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -61,7 +61,6 @@ const GEOCODING_API_KEY = process.env.REACT_APP_GEOCODING_API_KEY;
 
 const UserProfileContent = ({ formData, setFormData, onSave }) => {
   const { user } = useUser(); // Fetch user data from Clerk
-
   useEffect(() => {
     // Prefill form data with user details if available
     setFormData((prevData) => ({

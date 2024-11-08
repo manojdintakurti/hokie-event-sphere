@@ -35,11 +35,10 @@ const ProfileDialog = () => {
     const fetchProfileData = async () => {
         try {
             if (!isSignedIn) return;
-            const userEmail = user.email;
+            const userEmail = user?.emailAddresses;
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/profile`, {
                 params: { email: userEmail },
             });
-            
             const profileData = response.data;
             const isProfileComplete = profileData && profileData.address && profileData.interests && profileData.interests.length > 0;
             if (!isProfileComplete) {
