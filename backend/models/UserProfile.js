@@ -10,6 +10,10 @@ const userProfileSchema = new mongoose.Schema({
     state: { type: String },
     postalCode: { type: String },
     country: { type: String },
+    coordinates: {
+      latitude: { type: Number },
+      longitude: { type: Number },
+    }
   },
   interests: [String],
   imageUrl: { type: String },
