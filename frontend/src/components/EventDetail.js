@@ -31,15 +31,13 @@ function EventDetail() {
   }, [eventId]);
   const logClickCount = (eventData) => {
     if (!eventData) return;
-    const email= user?.emailAddresses;
-    console.log(email);
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/events/log-click`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user?._id,
+        userId: sessionStorage.getItem("userEmail"),
         category: eventData.main_category,
         subcategory: eventData.sub_category,
       }),
