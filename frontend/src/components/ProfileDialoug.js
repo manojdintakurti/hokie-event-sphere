@@ -28,7 +28,18 @@ const ProfileDialog = () => {
     },
   });
   const { isSignedIn, user } = useUser();
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                if (!isSignedIn) return;
+                const userEmail = user?.primaryEmailAddress?.emailAddress;
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/profile`, {
+                    params: { email: userEmail },
+                });
+                const profileData = response.data;
+                const isProfileComplete = profileData && profileData.address && profileData.interests && profileData.interests.length > 0;
 
+<<<<<<< HEAD
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
@@ -53,6 +64,26 @@ const ProfileDialog = () => {
     };
     fetchProfileData();
 }, []);
+=======
+                if (!isProfileComplete) {
+                    setOpen(true);
+                } else {
+                    setFormData(profileData);
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    // Profile not found, open the profile completion dialog
+                    setOpen(true);
+                } else {
+                    console.error('Error fetching profile data:', error);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfileData();
+    }, [isSignedIn, user]);
+>>>>>>> 19fdf33bc7ad3a999f787406a6f340798e7eb389
 
 
 
