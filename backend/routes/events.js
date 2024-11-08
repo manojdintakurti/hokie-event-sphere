@@ -68,7 +68,7 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
       }
     } catch (error) {
       // If categorizer call fails, log the error but still return the saved event
-      console.error('Error calling categorizer:', categorizerError);
+      console.error('Error calling categorizer:', error);
       res.status(201).json(savedEvent);
     }
   } catch (error) {
