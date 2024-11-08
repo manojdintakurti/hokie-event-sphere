@@ -30,30 +30,35 @@ const ProfileDialog = () => {
     },
   });
   const { isSignedIn, user } = useUser();
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                if (!isSignedIn) return;
+                const userEmail = user?.primaryEmailAddress?.emailAddress;
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/profile`, {
+                    params: { email: userEmail },
+                });
+                const profileData = response.data;
+                const isProfileComplete = profileData && profileData.address && profileData.interests && profileData.interests.length > 0;
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-        try {
-            if (!isSignedIn) return;
-            const userEmail = user?.emailAddresses;
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/profile`, {
-                params: { email: userEmail },
-            });
-            const profileData = response.data;
-            const isProfileComplete = profileData && profileData.address && profileData.interests && profileData.interests.length > 0;
-            if (!isProfileComplete) {
-                setOpen(true);
-            } else {
-                setFormData(profileData);
+                if (!isProfileComplete) {
+                    setOpen(true);
+                } else {
+                    setFormData(profileData);
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    // Profile not found, open the profile completion dialog
+                    setOpen(true);
+                } else {
+                    console.error('Error fetching profile data:', error);
+                }
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error('Error fetching profile data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    fetchProfileData();
-}, []);
+        };
+        fetchProfileData();
+    }, [isSignedIn, user]);
 
 
 
