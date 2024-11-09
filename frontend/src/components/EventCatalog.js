@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../styles/EventCatalog.css";
 import { Link, useLocation } from "react-router-dom";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 function EventCatalog({ selectedCategory }) {
   const [events, setEvents] = useState([]);
@@ -10,7 +12,6 @@ function EventCatalog({ selectedCategory }) {
   const location = useLocation();
 
   useEffect(() => {
-    // This will run whenever the location changes
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -37,12 +38,11 @@ function EventCatalog({ selectedCategory }) {
   };
 
   useEffect(() => {
-    fetchEvents(currentPage); // Fetch events on initial load and whenever the category or page changes
+    fetchEvents(currentPage);
   }, [selectedCategory, currentPage]);
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    fetchEvents(newPage);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -91,18 +91,16 @@ function EventCatalog({ selectedCategory }) {
           </>
         )}
       </div>
-      {/* Pagination controls */}
-      <div className="pagination">
-        {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>
-            Previous
-          </button>
-        )}
-        {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>
-            Next
-          </button>
-        )}
+
+      <div className="pagination-container-main">
+          <Stack spacing={2} className="pagination-container">
+                  <Pagination
+                    className="pagination"
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                  />
+          </Stack>
       </div>
     </div>
   );
