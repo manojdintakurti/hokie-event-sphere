@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/EventCatalog.css";
 import { Link, useLocation } from "react-router-dom";
 
-function EventCatalog() {
+function EventCatalog({ selectedCategory }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,10 +17,11 @@ function EventCatalog() {
     });
   }, [location]);
 
-  const fetchEvents = (page) => {
+  const fetchEvents = (page = 1) => {
     setLoading(true);
+    const categoryQuery = selectedCategory ? `&category=${selectedCategory} Events` : "";
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&limit=12`
+      `${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&limit=12${categoryQuery}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -36,10 +37,11 @@ function EventCatalog() {
   };
 
   useEffect(() => {
-    fetchEvents(1); // Initial load for page 1
-  }, []);
+    fetchEvents(currentPage); // Fetch events on initial load and whenever the category or page changes
+  }, [selectedCategory, currentPage]);
 
   const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
     fetchEvents(newPage);
   };
 

@@ -143,27 +143,28 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
     });
   }
 });
-
-// GET route for retrieving events
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skipIndex = (page - 1) * limit;
+    const main_category = req.query.category;
 
-    const events = await Event.find()
+    // Explicitly define the filter object
+    const filter = main_category ? { main_category: main_category } : {};
+    const events = await Event.find(filter)
       .sort({ createdAt: -1 })
       .skip(skipIndex)
       .limit(limit)
       .exec();
 
-    const total = await Event.countDocuments();
+    const total = await Event.countDocuments(filter);
 
     res.json({
       events,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
-      totalEvents: total
+      totalEvents: total,
     });
   } catch (error) {
     console.error('Error fetching events:', error);
