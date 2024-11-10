@@ -369,7 +369,6 @@ console.log(req.body);
 });
 
 // recommendation routes
-
 router.get('/recommended', async (req, res) => {
   try {
       const { userId, latitude, longitude, limit = 10 } = req.query;
@@ -386,17 +385,12 @@ router.get('/recommended', async (req, res) => {
           return res.status(404).json({ message: "User profile not found" });
       }
 
-      // Get user's location (either from query or profile)
+      // Get user's location
       const userLat = latitude || userProfile.address?.coordinates?.latitude;
       const userLon = longitude || userProfile.address?.coordinates?.longitude;
 
-      console.log('\nFetching Recommendations:');
-      console.log(`User: ${userProfile.fullName} (${userProfile.emailAddresses})`);
-      console.log(`Location: ${userLat}, ${userLon}`);
-      console.log(`Interests: ${userProfile.interests?.join(', ') || 'None'}`);
-
       // Call FastAPI recommendation service
-      const recommendationResponse = await axios.get(
+      const response = await axios.get(
           `${process.env.FASTAPI_URL}/recommendations/${userId}`,
           {
               params: {
@@ -408,26 +402,14 @@ router.get('/recommended', async (req, res) => {
           }
       );
 
-      const { recommendations, scores } = recommendationResponse.data;
-
-      // Prepare response data
-      let responseData = {
-          success: true,
-          recommendations: recommendations.map((event, index) => ({
-            title: event.title,
-            venue: event.venue,
-            score: scores[index].score,
-            scoreBreakdown: scores[index].breakdown
-          }))
-      };
-
-  res.json(responseData);
+      // Return the recommendations directly from FastAPI
+      return res.json(response.data);
 
   } catch (error) {
-      console.error('Error getting recommendations:', error);
+      console.error('Error getting recommendations:', error?.response?.data || error);
       res.status(500).json({ 
           message: "Error fetching recommendations",
-          error: error.message 
+          error: error?.response?.data?.detail || error.message
       });
   }
 });
