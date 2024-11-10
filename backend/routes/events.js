@@ -416,7 +416,6 @@ router.get('/recommended', async (req, res) => {
           recommendations: recommendations.map((event, index) => ({
             title: event.title,
             venue: event.venue,
-            date: event.startDate.split('T')[0],
             score: scores[index].score,
             scoreBreakdown: scores[index].breakdown
           }))
