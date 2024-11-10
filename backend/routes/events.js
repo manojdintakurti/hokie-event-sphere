@@ -369,10 +369,9 @@ console.log(req.body);
 });
 
 // recommendation routes
-
 router.get('/recommended', async (req, res) => {
   try {
-      const { userId, latitude, longitude, limit = 10, debug = false } = req.query;
+      const { userId, latitude, longitude, limit = 10 } = req.query;
 
       if (!userId) {
           return res.status(400).json({ 
@@ -386,17 +385,12 @@ router.get('/recommended', async (req, res) => {
           return res.status(404).json({ message: "User profile not found" });
       }
 
-      // Get user's location (either from query or profile)
+      // Get user's location
       const userLat = latitude || userProfile.address?.coordinates?.latitude;
       const userLon = longitude || userProfile.address?.coordinates?.longitude;
 
-      console.log('\nFetching Recommendations:');
-      console.log(`User: ${userProfile.fullName} (${userProfile.emailAddresses})`);
-      console.log(`Location: ${userLat}, ${userLon}`);
-      console.log(`Interests: ${userProfile.interests?.join(', ') || 'None'}`);
-
       // Call FastAPI recommendation service
-      const recommendationResponse = await axios.get(
+      const response = await axios.get(
           `${process.env.FASTAPI_URL}/recommendations/${userId}`,
           {
               params: {
@@ -408,69 +402,24 @@ router.get('/recommended', async (req, res) => {
           }
       );
 
-      const { recommendations, scores } = recommendationResponse.data;
-
-      // Prepare response data
-      let responseData = {
-          success: true,
-          recommendations: recommendations.map((event, index) => ({
-              ...event,
-              score: scores[index].score,
-              scoreBreakdown: scores[index].breakdown
-          }))
-      };
-
-      // If debug mode is enabled, add additional information
-      if (debug === 'true') {
-          // Get click history
-          const clickHistory = await ClickCount.find({ userId });
-          
-          // Get RSVP history
-          const rsvpHistory = await Event.find({
-              "rsvps.email": userProfile.emailAddresses
-          });
-
-          responseData.debug = {
-              user: {
-                  id: userId,
-                  email: userProfile.emailAddresses,
-                  interests: userProfile.interests || [],
-                  hasLocation: !!(userLat && userLon)
-              },
-              stats: {
-                  totalClicks: clickHistory.reduce((sum, click) => sum + click.categoryCount, 0),
-                  clickedCategories: clickHistory.map(click => ({
-                      category: click.category,
-                      count: click.categoryCount,
-                      subCategories: click.subCategories
-                  })),
-                  totalRSVPs: rsvpHistory.length,
-                  rsvpedCategories: Object.entries(
-                      rsvpHistory.reduce((acc, event) => {
-                          acc[event.main_category] = (acc[event.main_category] || 0) + 1;
-                          return acc;
-                      }, {})
-                  )
+      // Process and simplify the response
+      const recommendations = response.data.recommendations.map(event => ({
+          title: event.title,
+          venue: event.venue,
+          date: new Date(event.startDate).toISOString().split('T')[0],
+          score: {
+              total: Number(event.score).toFixed(3),
+              breakdown: {
+                  category: Number(event.scoreBreakdown.category).toFixed(3),
+                  rsvp: Number(event.scoreBreakdown.rsvp).toFixed(3),
+                  location: Number(event.scoreBreakdown.location).toFixed(3),
+                  interests: Number(event.scoreBreakdown.interests).toFixed(3),
+                  price: Number(event.scoreBreakdown.price).toFixed(3)
               }
-          };
+          }
+      }));
 
-          console.log('\nRecommendation Debug Info:');
-          console.log(`Total Clicks: ${responseData.debug.stats.totalClicks}`);
-          console.log(`Total RSVPs: ${responseData.debug.stats.totalRSVPs}`);
-          
-          // Log top 3 recommendations with scores
-          console.log('\nTop 3 Recommendations:');
-          responseData.recommendations.slice(0, 3).forEach((rec, index) => {
-              console.log(`\n${index + 1}. ${rec.title}`);
-              console.log(`   Final Score: ${rec.score.toFixed(3)}`);
-              console.log('   Score Breakdown:');
-              Object.entries(rec.scoreBreakdown).forEach(([key, value]) => {
-                  console.log(`   - ${key}: ${value.toFixed(3)}`);
-              });
-          });
-      }
-
-      res.json(responseData);
+      res.json({ recommendations });
 
   } catch (error) {
       console.error('Error getting recommendations:', error);
@@ -480,5 +429,6 @@ router.get('/recommended', async (req, res) => {
       });
   }
 });
+
 
 module.exports = router;
