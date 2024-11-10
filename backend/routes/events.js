@@ -336,9 +336,17 @@ console.log(req.body);
   }
 
   try {
+    // Get user profile to get email
+    const userProfile = await UserProfile.findById(userId);
+    if (!userProfile) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    const userEmail = userProfile.emailAddresses;
+
     // Find or create the document for the user and category
     const clickCountDoc = await ClickCount.findOneAndUpdate(
-      { userId, category },
+      { userId: userEmail, category }, 
       { $inc: { categoryCount: 1 } }, // Increment the main category count
       { new: true, upsert: true }
     );
@@ -385,7 +393,7 @@ router.get('/recommended', async (req, res) => {
           return res.status(404).json({ message: "User profile not found" });
       }
 
-      // Get user's location
+      const userEmail = userProfile.emailAddresses;
       const userLat = latitude || userProfile.address?.coordinates?.latitude;
       const userLon = longitude || userProfile.address?.coordinates?.longitude;
 
@@ -394,7 +402,7 @@ router.get('/recommended', async (req, res) => {
           `${process.env.FASTAPI_URL}/recommendations/${userId}`,
           {
               params: {
-                  user_email: userProfile.emailAddresses,
+                  user_email: userEmail,
                   latitude: userLat,
                   longitude: userLon,
                   limit
