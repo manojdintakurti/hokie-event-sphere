@@ -6,6 +6,7 @@ import EventDetailMid from "./EventDetailMid";
 import EventCatalog from "./EventCatalog";
 import "add-to-calendar-button";
 
+
 function EventDetail() {
   const { eventId } = useParams(); // Get the event ID from the URL
   const navigate = useNavigate();

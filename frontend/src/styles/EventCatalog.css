@@ -103,3 +103,56 @@
     color: #3498db; /* Blue color */
     font-weight: bold;
 }
+
+/* Center the pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  /* Style for the pagination itself */
+  .pagination .MuiPaginationItem-root {
+    color: #7c3aed; /* Default color for non-selected pages */
+    border-radius: 8px;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Style for active (selected) page */
+  .pagination .Mui-selected {
+    background-color: #7c3aed; /* Purple background for selected page */
+    color: white;              /* White text for selected page */
+    font-weight: bold;
+    border: 1px solid #7c3aed;
+  }
+  
+  /* Hover effect */
+  .pagination .MuiPaginationItem-root:hover {
+    background-color: #d3a5ff; /* Light purple for hover effect */
+    color: white;
+  }
+  
+  /* Customize the next/previous buttons */
+  .pagination .MuiPaginationItem-previousNext {
+    background-color: #f3e5ff;
+    color: #7c3aed;
+    font-weight: bold;
+  }
+  
+  /* Pagination container spacing */
+  .pagination {
+    padding: 10px;
+  }
+  
+  .pagination-container-main{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .pagination .MuiPaginationItem-root.Mui-selected {
+    background-color: #7c3aed !important; /* Your custom purple color */
+    color: white !important;
+    font-weight: bold;
+    border-radius: 8px;
+}

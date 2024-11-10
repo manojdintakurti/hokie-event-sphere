@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../styles/EventCatalog.css";
 import { Link, useLocation } from "react-router-dom";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
-function EventCatalog() {
+function EventCatalog({ selectedCategory }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -10,17 +12,17 @@ function EventCatalog() {
   const location = useLocation();
 
   useEffect(() => {
-    // This will run whenever the location changes
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   }, [location]);
 
-  const fetchEvents = (page) => {
+  const fetchEvents = (page = 1) => {
     setLoading(true);
+    const categoryQuery = selectedCategory ? `&category=${selectedCategory} Events` : "";
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&limit=12`
+      `${process.env.REACT_APP_BACKEND_URL}/api/events?page=${page}&limit=12${categoryQuery}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -36,11 +38,11 @@ function EventCatalog() {
   };
 
   useEffect(() => {
-    fetchEvents(1); // Initial load for page 1
-  }, []);
+    fetchEvents(currentPage);
+  }, [selectedCategory, currentPage]);
 
-  const handlePageChange = (newPage) => {
-    fetchEvents(newPage);
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -89,18 +91,16 @@ function EventCatalog() {
           </>
         )}
       </div>
-      {/* Pagination controls */}
-      <div className="pagination">
-        {currentPage > 1 && (
-          <button onClick={() => handlePageChange(currentPage - 1)}>
-            Previous
-          </button>
-        )}
-        {currentPage < totalPages && (
-          <button onClick={() => handlePageChange(currentPage + 1)}>
-            Next
-          </button>
-        )}
+
+      <div className="pagination-container-main">
+          <Stack spacing={2} className="pagination-container">
+                  <Pagination
+                    className="pagination"
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                  />
+          </Stack>
       </div>
     </div>
   );
