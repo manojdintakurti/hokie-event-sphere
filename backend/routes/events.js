@@ -404,20 +404,34 @@ router.get('/recommended', async (req, res) => {
 
       // Process and simplify the response
       const recommendations = response.data.recommendations.map(event => ({
-          title: event.title,
-          venue: event.venue,
-          date: new Date(event.startDate).toISOString().split('T')[0],
-          score: {
-              total: Number(event.score).toFixed(3),
-              breakdown: {
-                  category: Number(event.scoreBreakdown.category).toFixed(3),
-                  rsvp: Number(event.scoreBreakdown.rsvp).toFixed(3),
-                  location: Number(event.scoreBreakdown.location).toFixed(3),
-                  interests: Number(event.scoreBreakdown.interests).toFixed(3),
-                  price: Number(event.scoreBreakdown.price).toFixed(3)
-              }
+          // Safely format the date
+          let formattedDate = '';
+          try {
+            if (event.startDate) {
+                // Remove any timezone information if present
+                const dateStr = event.startDate.split('T')[0];
+                formattedDate = dateStr;
+            }
+          } catch (dateError) {
+            console.error('Error formatting date:', dateError);
+            formattedDate = 'Date not available';
           }
-      }));
+          return {
+            title: event.title || '',
+            venue: event.venue || '',
+            date: formattedDate,
+            score: {
+                total: Number(event.score || 0).toFixed(3),
+                breakdown: {
+                    category: Number(event.scoreBreakdown?.category || 0).toFixed(3),
+                    rsvp: Number(event.scoreBreakdown?.rsvp || 0).toFixed(3),
+                    location: Number(event.scoreBreakdown?.location || 0).toFixed(3),
+                    interests: Number(event.scoreBreakdown?.interests || 0).toFixed(3),
+                    price: Number(event.scoreBreakdown?.price || 0).toFixed(3)
+                  }
+              }
+          };
+      });
 
       res.json({ recommendations });
 
