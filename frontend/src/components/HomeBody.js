@@ -21,7 +21,7 @@ function Body() {
                     <button className={"btn btn-primary home-hero-button"}>100+ live events</button>
                 </div>
                 <div className="right-image">
-                    <img src={require("../Images/homeHero.png")} alt="Event Image" width={1200} />
+                    <img src={require("../Images/homeHero.png")} alt="Event" width={1200} />
                 </div>
             </div>
             <EventsFilter onCategoryChange={handleCategoryChange} />
