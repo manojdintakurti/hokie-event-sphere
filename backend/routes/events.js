@@ -369,6 +369,7 @@ console.log(req.body);
 });
 
 // recommendation routes
+
 router.get('/recommended', async (req, res) => {
   try {
       const { userId, latitude, longitude, limit = 10 } = req.query;
@@ -385,12 +386,17 @@ router.get('/recommended', async (req, res) => {
           return res.status(404).json({ message: "User profile not found" });
       }
 
-      // Get user's location
+      // Get user's location (either from query or profile)
       const userLat = latitude || userProfile.address?.coordinates?.latitude;
       const userLon = longitude || userProfile.address?.coordinates?.longitude;
 
+      console.log('\nFetching Recommendations:');
+      console.log(`User: ${userProfile.fullName} (${userProfile.emailAddresses})`);
+      console.log(`Location: ${userLat}, ${userLon}`);
+      console.log(`Interests: ${userProfile.interests?.join(', ') || 'None'}`);
+
       // Call FastAPI recommendation service
-      const response = await axios.get(
+      const recommendationResponse = await axios.get(
           `${process.env.FASTAPI_URL}/recommendations/${userId}`,
           {
               params: {
@@ -402,38 +408,21 @@ router.get('/recommended', async (req, res) => {
           }
       );
 
-      // Process and simplify the response
-      const recommendations = response.data.recommendations.map(event => ({
-          // Safely format the date
-          let formattedDate = '';
-          try {
-            if (event.startDate) {
-                // Remove any timezone information if present
-                const dateStr = event.startDate.split('T')[0];
-                formattedDate = dateStr;
-            }
-          } catch (dateError) {
-            console.error('Error formatting date:', dateError);
-            formattedDate = 'Date not available';
-          }
-          return {
-            title: event.title || '',
-            venue: event.venue || '',
-            date: formattedDate,
-            score: {
-                total: Number(event.score || 0).toFixed(3),
-                breakdown: {
-                    category: Number(event.scoreBreakdown?.category || 0).toFixed(3),
-                    rsvp: Number(event.scoreBreakdown?.rsvp || 0).toFixed(3),
-                    location: Number(event.scoreBreakdown?.location || 0).toFixed(3),
-                    interests: Number(event.scoreBreakdown?.interests || 0).toFixed(3),
-                    price: Number(event.scoreBreakdown?.price || 0).toFixed(3)
-                  }
-              }
-          };
-      });
+      const { recommendations, scores } = recommendationResponse.data;
 
-      res.json({ recommendations });
+      // Prepare response data
+      let responseData = {
+          success: true,
+          recommendations: recommendations.map((event, index) => ({
+            title: event.title,
+            venue: event.venue,
+            date: event.startDate.split('T')[0],
+            score: scores[index].score,
+            scoreBreakdown: scores[index].breakdown
+          }))
+      };
+
+  res.json(responseData);
 
   } catch (error) {
       console.error('Error getting recommendations:', error);
@@ -443,6 +432,5 @@ router.get('/recommended', async (req, res) => {
       });
   }
 });
-
 
 module.exports = router;
