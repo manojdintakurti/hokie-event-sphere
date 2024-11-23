@@ -30,7 +30,6 @@ function Footer() {
                     <a href="https://facebook.com" target="_blank" rel="noreferrer"><i className="fab fa-facebook"></i></a>
                 </div>
 
-                {/* Copyright */}
                 <p className="footer-copyright">
                     © 2024 Hokie Event Sphere | Connecting Hokies Through Amazing Events | Virginia Tech
                 </p>
