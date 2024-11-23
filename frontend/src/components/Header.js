@@ -13,7 +13,6 @@ function Header() {
             <img
                 src={require("../Images/IMG_3978.png")}
                 className="logo"
-
             />
 
           <img
