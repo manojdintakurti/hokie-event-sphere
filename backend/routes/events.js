@@ -76,7 +76,6 @@ router.post('/', cors(corsOptions), upload.single('image'), async (req, res) => 
     res.status(400).json({ message: error.message });
   }
 });
-
 router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
   try {
     console.log('RSVP Request:', {
@@ -96,17 +95,17 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Check for duplicate RSVP
+    // Check for duplicate RSVP in the event
     const normalizedEmail = email.toLowerCase().trim();
-    const existingRSVP = event.rsvps.find(rsvp => 
-      rsvp.email.toLowerCase().trim() === normalizedEmail
+    const existingRSVP = event.rsvps.find(rsvp =>
+        rsvp.email.toLowerCase().trim() === normalizedEmail
     );
 
     if (existingRSVP) {
       return res.status(400).json({ message: "You have already RSVP'd for this event" });
     }
 
-    // Create new RSVP
+    // Create new RSVP for the event
     const newRSVP = {
       name: name.trim(),
       email: normalizedEmail,
@@ -117,19 +116,45 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
     // Add RSVP to event
     event.rsvps.push(newRSVP);
     await event.save();
+    // Add RSVP to user profile
+    try {
+      const user = await UserProfile.findOne({ emailAddresses: normalizedEmail });
+      if (user) {
+        // Check if the event is already in the user's RSVP list
+        const userExistingRSVP = user.rsvps.find(
+            (rsvp) => rsvp.event._id.toString() === event._id.toString()
+        );
+
+        if (!userExistingRSVP) {
+          // Add the full event to the user's RSVP list
+          user.rsvps.push({
+            event: event.toObject(), // Convert Mongoose document to plain object
+            status: "Confirmed", // Default status for RSVP
+            registeredAt: new Date()
+          });
+          await user.save();
+          console.log(user);
+        }
+      } else {
+        console.warn(`User with email ${normalizedEmail} not found. Skipping user profile update.`);
+      }
+    } catch (userError) {
+      console.error('Error updating user profile:', userError);
+      // Continue without failing the RSVP creation if the user profile update fails
+    }
 
     // Send email confirmation
     try {
       const emailService = require('../services/emailService');
       await emailService.sendRSVPConfirmation(event, newRSVP);
-      
+
       res.status(201).json({
         message: "RSVP successful and confirmation email sent",
         rsvp: newRSVP
       });
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError);
-      
+
       res.status(201).json({
         message: "RSVP successful, but there was an issue sending the confirmation email",
         rsvp: newRSVP
@@ -137,9 +162,9 @@ router.post("/:id/rsvp", cors(corsOptions), async (req, res) => {
     }
   } catch (error) {
     console.error('Error in RSVP route:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "An error occurred while processing your RSVP",
-      error: error.message 
+      error: error.message
     });
   }
 });
