@@ -10,6 +10,12 @@ function Header() {
     <header className="header">
       <div className="header-left">
         <Link to={"/"}>
+            <img
+                src={require("../Images/IMG_3978.png")}
+                className="logo"
+
+            />
+
           <img
             src={require("../Images/logo.png")}
             alt="Website Logo"
