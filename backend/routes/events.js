@@ -337,25 +337,20 @@ console.log(req.body);
 
   try {
     // Get user profile to get email
-    const userProfile = await UserProfile.findById(userId);
+    const userProfile = await UserProfile.findOne({ emailAddresses: userId }); // Assuming userId is an email here
     if (!userProfile) {
         return res.status(404).json({ message: 'User not found' });
     }
-
-    const userEmail = userProfile.emailAddresses;
-
     // Find or create the document for the user and category
     const clickCountDoc = await ClickCount.findOneAndUpdate(
-      { userId: userEmail, category }, 
+      { userId: userId, category },
       { $inc: { categoryCount: 1 } }, // Increment the main category count
       { new: true, upsert: true }
     );
-
     // Check if the subcategory already exists in the subCategories array
     const subCategoryIndex = clickCountDoc.subCategories.findIndex(
       (sub) => sub.subCategory === subcategory
     );
-
     if (subCategoryIndex >= 0) {
       // If the subcategory exists, increment its count
       clickCountDoc.subCategories[subCategoryIndex].subCategoryCount += 1;
