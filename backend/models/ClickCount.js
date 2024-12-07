@@ -7,6 +7,7 @@ const clickCountSchema = new mongoose.Schema({
       category: { type: String, required: true },
       categoryCount: { type: Number, default: 0 }, // Count for the category
       subCategories: [
+        
         {
           subCategory: { type: String, required: true },
           subCategoryCount: { type: Number, default: 0 } // Count for each subcategory
