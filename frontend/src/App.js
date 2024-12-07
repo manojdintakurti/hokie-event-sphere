@@ -10,6 +10,9 @@ import './styles/global.css';
 import Header from "./components/Header";
 import Footer from "./components/footer";
 import EventDetail from "./components/EventDetail";
+import Recommendations from "./components/Recommendations";
+import './index.css';
+
 
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -49,6 +52,8 @@ function App() {
             } 
           />
           <Route path="/event-detail/:eventId" element={<EventDetail />} />
+          <Route path="/Recommendations" element={<Recommendations />} />
+
         </Routes>
         <Footer />
       </Router>

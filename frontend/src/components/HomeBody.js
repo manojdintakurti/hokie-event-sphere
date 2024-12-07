@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import '../styles/body.css';
 import EventCatalog from './EventCatalog';
 import EventsFilter from "./EventFilters";
+import Recommendations from "./Recommendations";
 
-function Body() {
+function Body(props) {
     const [selectedCategory, setSelectedCategory] = useState("");
 
     const handleCategoryChange = (category) => {
@@ -24,6 +25,7 @@ function Body() {
                     <img src={require("../Images/homeHero.png")} alt="Event" width={1200} />
                 </div>
             </div>
+            {props.isSignedIn && <Recommendations /> }
             <EventsFilter onCategoryChange={handleCategoryChange} />
             <EventCatalog selectedCategory={selectedCategory} />
         </div>

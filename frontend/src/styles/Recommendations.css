@@ -1,0 +1,70 @@
+.event-recommendations {
+    text-align: center;
+    padding: 20px;
+}
+
+.event-recommendations h2 {
+    font-size: 28px; /* Increase font size for emphasis */
+    font-weight: bold; /* Make the text bold */
+    margin-bottom: 20px;
+    text-align: left; /* Align the text to the left */
+    color: #333; /* Darker color for better visibility */
+    padding-left: 10px; /* Add some padding to separate from the edge */
+}
+
+.event-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+.event-card {
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    background-color: #fff;
+}
+
+.event-card:hover {
+    transform: scale(1.05);
+}
+
+.event-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.event-details {
+    padding: 15px;
+}
+
+.event-title {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #444;
+}
+
+.event-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.event-button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.event-button:hover {
+    background-color: #0056b3;
+}

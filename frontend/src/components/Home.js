@@ -21,7 +21,7 @@ function Home() {
   return (
     <div className="container">
         {isSignedIn && <ProfileDialog />}
-      <Body />
+      <Body isSignedIn = {isSignedIn}/>
     </div>
   );
 }

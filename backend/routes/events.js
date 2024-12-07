@@ -426,16 +426,16 @@ router.post('/log-click', async (req, res) => {
 // recommendation routes
 router.get('/recommended', async (req, res) => {
   try {
-      const { userId, latitude, longitude, limit = 10 } = req.query;
+      const { email, latitude, longitude, limit = 10 } = req.query;
 
-      if (!userId) {
+      if (!email) {
           return res.status(400).json({ 
               message: "Missing required parameter: userId" 
           });
       }
 
       // Get user profile
-      const userProfile = await UserProfile.findById(userId);
+    const userProfile = await UserProfile.findOne({ emailAddresses: email });
       if (!userProfile) {
           return res.status(404).json({ message: "User profile not found" });
       }
@@ -443,6 +443,7 @@ router.get('/recommended', async (req, res) => {
       const userEmail = userProfile.emailAddresses;
       const userLat = latitude || userProfile.address?.coordinates?.latitude;
       const userLon = longitude || userProfile.address?.coordinates?.longitude;
+      const userId = userProfile._id
 
       // Call FastAPI recommendation service
       const response = await axios.get(
