@@ -42,8 +42,9 @@ const EventRecommendations = () => {
             <div className="event-cards">
                 {recommendations.slice(0,5)?.map((event, index) => (
                     <Link
-                        to={`/event-detail/${event._id}`}
-                        key={event._id}
+                        to={`/event-detail/${event.eventId}`}
+                        key={event.eventId}
+                        className={"recomendations-card"}
                         onClick={() => {
                             window.scrollTo({
                                 top: 0,
