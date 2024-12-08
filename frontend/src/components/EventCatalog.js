@@ -72,7 +72,7 @@ function EventCatalog({ selectedCategory }) {
                     <img
                       src={event.imageUrl}
                       alt={event.title}
-                      className="event-image"
+                      className="event-image-cat"
                     />
                   </div>
                   <div className="event-info">
