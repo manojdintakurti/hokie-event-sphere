@@ -80,7 +80,7 @@ function EventDetail() {
 
         <div className="event-content">
           {/* Left side: Event heading and details */}
-          <div className="event-info">
+          <div className="event-info-details">
             <h1>{event.title}</h1>
           </div>
 

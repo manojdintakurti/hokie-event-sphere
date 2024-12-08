@@ -200,7 +200,7 @@
     z-index: 1;
 }
 
-.event-info {
+.event-info-details {
     margin: 30px;
 }
 
@@ -211,7 +211,7 @@
     color: white;
 }
 
-.event-info p {
+.event-info-details p {
     font-size: 18px;
     margin-bottom: 20px;
 }
