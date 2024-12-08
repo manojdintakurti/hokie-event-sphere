@@ -427,7 +427,6 @@ router.post('/log-click', async (req, res) => {
 router.get('/recommended', async (req, res) => {
   try {
       const { email, latitude, longitude, limit = 10 } = req.query;
-
       if (!email) {
           return res.status(400).json({ 
               message: "Missing required parameter: userId" 
