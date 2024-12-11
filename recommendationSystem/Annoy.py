@@ -112,25 +112,3 @@ class Annoy:
         distances.sort(key=lambda x: x[1])
 
         return [point for point, _ in distances[:num_neighbors]]
-
-# Example Usage
-if __name__ == "__main__":
-    num_features = 5  # Dimensionality of data (for example, each event could have 5 features)
-    num_trees = 10     # Number of trees for better accuracy
-    num_neighbors = 3  # Number of nearest neighbors to find
-
-    # Create the Annoy index
-    annoy_index = Annoy(num_features=num_features, num_trees=num_trees)
-
-    # Add items (events) with random features (replace with real event data)
-    for i in range(100):  # 100 events
-        vector = np.random.rand(num_features).tolist()
-        annoy_index.add_item(i, vector)
-
-    # Build the Annoy index
-    annoy_index.build()
-
-    # Query the nearest neighbors for a specific event
-    event_id = 10  # Example event ID
-    neighbors = annoy_index.get_nns_by_item(event_id, num_neighbors)
-    print(f"Nearest neighbors for event {event_id}: {neighbors}")

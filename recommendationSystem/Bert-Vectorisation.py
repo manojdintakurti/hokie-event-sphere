@@ -73,21 +73,3 @@ class EventRecommendationSystem:
 
         recommended_events = [event_id for event_id, _ in similarities[:num_recommendations]]
         return recommended_events
-
-# Example usage
-if __name__ == "__main__":
-    # Initialize the event recommendation system with BERT embeddings
-    recommender = EventRecommendationSystem(bert_model_name="bert-base-uncased")
-
-    # Add some events with their descriptions
-    recommender.add_event(1, "Join us for a networking event with industry leaders and professionals.")
-    recommender.add_event(2, "Attend a career fair with top companies from various sectors.")
-    recommender.add_event(3, "Learn about new technologies in machine learning and artificial intelligence.")
-    recommender.add_event(4, "Participate in a sports event to boost team spirit and health.")
-    recommender.add_event(5, "Join a coding workshop for beginners and professionals alike.")
-
-    # Query description to find similar events
-    query = "Looking for a tech career fair with opportunities for networking."
-    recommended_events = recommender.recommend_events(query, num_recommendations=3)
-
-    print(f"Recommended Events for query '{query}': {recommended_events}")
